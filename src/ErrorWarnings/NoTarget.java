@@ -7,5 +7,4 @@ public class NoTarget extends Exception{
 	public NoTarget() {
 		super("\"no target\" in \"no project\"");
 	}
-
 }

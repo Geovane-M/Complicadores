@@ -1,11 +1,13 @@
 if(1 > d){
-    if(b == c){
-        a += 2;
+	if(b =$= c){
+    	int a += 2;
         a = a - 2;
-        b = a / c;
+        int b = a / c;
+        char c = ' '
+        int d = 214748;
     }
     for(int i = 0; i < 10; i += 1){
         maino
         main
-    }
+    } 
 }

@@ -23,7 +23,7 @@ import lexicalAnalyzer.LexicalAnalyzer;
 import lexicalAnalyzer.Token;
 
 public class IDE {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		try {
 			LexicalAnalyzer la = new LexicalAnalyzer();

@@ -29,10 +29,10 @@ public class LexicalAnalyzer {
 	}
 
 	public Token nextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
-		this.getNextToken();
 		if (this.pointer.isEOF()) {
 			return null;
 		} else {
+			this.getNextToken();
 			Token newToken = new Token(this.currentMark.getDescription(), this.currentValue);
 			newToken.setColumn(this.currentIndexMark);
 			newToken.setLine(this.line);
@@ -47,7 +47,7 @@ public class LexicalAnalyzer {
 				this.updateLine();
 				if (!this.pointer.isEOF())
 					this.cr_char = this.pointer.nextChar();
-			} else if (Character.isSpaceChar(this.cr_char)) {
+			} else if (Character.isSpaceChar(this.cr_char) || this.cr_char == '\t') {
 				this.cr_char = this.nextChar();
 			} else if (Character.isDigit(this.cr_char)) {
 				this.updateMarkLocation();
@@ -73,16 +73,16 @@ public class LexicalAnalyzer {
 				this.endCharacter_();
 				return;
 			} else {
-				throw new LexicalError(this.line, this.column);
+				throw new LexicalError(this.line, this.lineError());
 			}
-		} while (!this.pointer.isEOF());
+		} while (true);
 		if (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
 		}
 	}
 
 	private void endNumeric() throws OutOfRange {
-		while (true) {
+		while (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
 			if (Character.isDigit(this.cr_char)) {
 				this.currentValue += this.cr_char;
@@ -93,8 +93,11 @@ public class LexicalAnalyzer {
 				this.endFloat();
 				break;
 			} else {
-				if (this.currentValue.length() < -2147483648 || this.currentValue.length() > 2147483647) {
-					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line, this.column);
+				try {
+					Integer.parseInt(this.currentValue);
+				} catch (NumberFormatException e) {
+					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line,
+							this.lineError());
 				}
 				break;
 			}
@@ -102,7 +105,7 @@ public class LexicalAnalyzer {
 	}
 
 	private void endFloat() throws OutOfRange {
-		while (true) {
+		while (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
 			if (Character.isDigit(this.cr_char)) {
 				this.currentValue += this.cr_char;
@@ -110,8 +113,11 @@ public class LexicalAnalyzer {
 				this.currentValue += this.cr_char;
 				break;
 			} else {
-				if (this.currentValue.length() < 1.2E-38 || this.currentValue.length() > 3.4E+38) {
-					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line, this.column);
+				try {
+					Integer.parseInt(this.currentValue);
+				} catch (NumberFormatException e) {
+					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line,
+							this.lineError());
 				}
 				break;
 			}
@@ -127,6 +133,7 @@ public class LexicalAnalyzer {
 				this.pointer.comeBack(1);
 				okay = false;
 			} else {
+				this.pointer.comeBack(1);
 				this.currentValue += this.cr_char;
 				this.currentMark = Tag.ARI_OP_ATTRIBUTION;
 			}
@@ -261,19 +268,18 @@ public class LexicalAnalyzer {
 	}
 
 	private void endIdOrReserved() {
-		while (true) {
+		while (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
 			if (Character.isLetterOrDigit(this.cr_char) || this.cr_char == '_') {
 				this.currentValue += this.cr_char;
-				if (new ReservedWords().containsKey(this.currentValue)) {
-					this.currentMark = new ReservedWords().getTag(this.currentValue);
-					this.cr_char = this.nextChar();
-					break;
-				}
 			} else {
-				this.currentMark = Tag.ID;
 				break;
 			}
+		}
+		if (new ReservedWords().containsKey(this.currentValue)) {
+			this.currentMark = new ReservedWords().getTag(this.currentValue);
+		} else {
+			this.currentMark = Tag.ID;
 		}
 	}
 
@@ -286,13 +292,13 @@ public class LexicalAnalyzer {
 				this.currentValue += this.cr_char;
 				this.cr_char = this.nextChar();
 			} else {
-				throw new ManyCharacters(this.line, this.column);
+				throw new ManyCharacters(this.line, this.lineError());
 			}
 		} else if (this.pointer.nextChar() == '\'') {
-			throw new EmptyCharacter(this.line, this.column);
+			throw new EmptyCharacter(this.line, this.lineError());
 		} else {
 			this.updateMarkLocation();
-			throw new LexicalError(this.line, this.column);
+			throw new LexicalError(this.line, this.lineError());
 		}
 	}
 
@@ -312,22 +318,28 @@ public class LexicalAnalyzer {
 	private void updateLine() {
 		this.line++;
 		this.column = 1;
+		this.pointer.nextLine();
 	}
 
 	private void updateMarkLocation() {
 		this.currentIndexMark = this.column;
 	}
 
-	private char nextChar() {
+	private Character nextChar() {
 		this.column++;
 		return this.pointer.nextChar();
 	}
 
-//	boolean floatingPoint(String floatingPoint) {
-//		return floatingPoint.matches("[0-9][0-9]*['.'][0-9][0-9]*");
-//	}
-//	
-//	boolean integer(String integer) {
-//		return integer.matches("[0-9][0-9]*");
-//	}
+	private String lineError() {
+		String stg = "";
+		stg += this.pointer.nextLine();
+		stg = stg.replace("\t", "    ");
+		int position = stg.indexOf(this.cr_char);
+		stg += "\n";
+		for (int i = 0; i < position; i += 1) {
+			stg += "-";
+		}
+		stg += "^";
+		return stg;
+	}
 }

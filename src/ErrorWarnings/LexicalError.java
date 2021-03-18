@@ -7,8 +7,8 @@ public class LexicalError extends Exception {
 		super("LexicalError!");
 	}
 
-	public LexicalError(int line, int column) {
-		System.err.println("LexicalError: Invalid character at line "+line+":column "+column);
+	public LexicalError(int line, String column) {
+		System.err.println("LexicalError: Invalid character at line "+line+":\n"+ column);
 	}
 
 }
