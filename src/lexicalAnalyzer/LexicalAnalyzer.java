@@ -93,12 +93,10 @@ public class LexicalAnalyzer {
 				this.endFloat();
 				break;
 			} else {
-				try {
-					Integer.parseInt(this.currentValue);
-				} catch (NumberFormatException e) {
+				if (Double.parseDouble(this.currentValue) < -2147483648d
+						|| Double.parseDouble(this.currentValue) > 2147483647d)
 					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line,
 							this.lineError());
-				}
 				break;
 			}
 		}
@@ -113,12 +111,10 @@ public class LexicalAnalyzer {
 				this.currentValue += this.cr_char;
 				break;
 			} else {
-				try {
-					Integer.parseInt(this.currentValue);
-				} catch (NumberFormatException e) {
+				if (Double.parseDouble(this.currentValue) < 1.2E-38d
+						|| Double.parseDouble(this.currentValue) > 3.4E+38d)
 					throw new OutOfRange(this.currentValue, this.currentMark.getDescription(), this.line,
 							this.lineError());
-				}
 				break;
 			}
 		}
