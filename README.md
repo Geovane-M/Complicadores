@@ -1,7 +1,7 @@
 <h2>Universidade Católica de Pernambuco</h2>
-<h3>Escola UNICAP ICAM-TECH</h3>
-<h3>Disciplina de compiladores</h3>
-<h3>Turma MS42.</h3>
+<h3>Escola: UNICAP ICAM-TECH</h3>
+<h3>Disciplina: Compiladores</h3>
+<h3>Turma: MS42.</h3>
 <h5>Grupo:</h5>
 <ul>
   <li>Geovane Miguel da Silva;</li>
