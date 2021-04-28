@@ -1,9 +1,4 @@
-2  3 4
-3456 78 
-5.46 
-'h' '7' ' '
-_sds ds_sd dfsd 
-< > <= >= == !=
-+ - / * = 
-(){};,
-main  if  else  while   do  for  int  float char
+int main(){
+int teste = 2;
+float teste2 = 2*2;
+}

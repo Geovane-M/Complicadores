@@ -2,8 +2,6 @@ package IDE;
 
 import java.io.IOException;
 
-import ErrorWarnings.EmptyCharacter;
-
 // -----------------------------------------
 /*
 • Ler arquivo texto com código na linguagem C
@@ -15,39 +13,33 @@ o Indicar último token lido.
 o Outras possibilidades: (1) linha do erro, (2) coluna do erro, etc.
 */
 
+import Parser.First;
+import ErrorWarnings.EmptyCharacter;
 import ErrorWarnings.LexicalError;
 import ErrorWarnings.ManyCharacters;
 import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
-import lexicalAnalyzer.LexicalAnalyzer;
+import Parser.Parser;
+import lexicalAnalyzer.Scanner;
 import lexicalAnalyzer.Token;
 
 public class IDE {
 	public static void main(String[] args) throws IOException {
-
-		try {
-			LexicalAnalyzer la = new LexicalAnalyzer();
-			Token token;
-			while (true) {
-				token = la.nextToken();
-				if (token == null) {
-					break;
-				} else {
-					System.out.println(token);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (OutOfRange e) {
-			e.printStackTrace();
-		} catch (ManyCharacters e) {
-			e.printStackTrace();
-		} catch (LexicalError e) {
-			e.printStackTrace();
-		} catch (EmptyCharacter e) {
-			e.printStackTrace();
-		} catch (NoTarget e) {
-			e.printStackTrace();
-		}
+		// CRIAR EOF
+//		try {
+//			Scanner scanner = new Scanner();
+//			Token token;
+//			while (true) {
+//				token = scanner.nextToken();
+//				if (token == null) {
+//					break;
+//				} else {
+//					System.out.println(token);
+//				}
+//			}
+		Parser parser = new Parser();
+		parser.programa();
+//
+//		} catch ()
 	}
 }

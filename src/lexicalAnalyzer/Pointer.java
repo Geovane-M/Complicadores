@@ -30,7 +30,7 @@ public class Pointer {
 		if (System.getProperty("os.name").compareTo("Linux") == 0) {				  		   // #
 			directory = "/home/migeo/Documentos/eclipse-workspace/Complicadores/src/teste.txt";// #
 		} else {																			   // #
-			directory = "D:/Java_projects/analisador_lexico/src/teste.txt"; 				   // #
+			directory = "D:/Java_projects/Complicadores/src/teste.txt"; 				   // #
 		} 																					   // #
 //#################################################################################################
 		File file = new File(directory);
