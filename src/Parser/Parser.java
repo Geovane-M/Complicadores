@@ -2,26 +2,26 @@ package Parser;
 
 import ErrorWarnings.*;
 
-import lexicalAnalyzer.Scanner;
+import lexicalAnalyzer.LexicalAnalyser;
 import lexicalAnalyzer.Token;
 
 import java.io.IOException;
 
 public class Parser {
-    private Scanner scanner;
+    private LexicalAnalyser lexicalAnalyser;
     private Token token;
     private First first = new First();
 
     public Parser(){
         try {
-            scanner = new Scanner();
+            lexicalAnalyser = new LexicalAnalyser();
         } catch (IOException | NoTarget e){
             e.printStackTrace();
         }
     }
 
     private void nextToken() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters {
-        this.token = scanner.nextToken();
+        this.token = lexicalAnalyser.nextToken();
     }
 
     public boolean tokenEquals(String mark){
@@ -51,6 +51,8 @@ public class Parser {
                 throw new SyntaxError("Invalid main declaration. Expected '}'");
 
             nextToken();
+            if(!first.conteudo.contains(token.getMark()))
+                throw new SyntaxError("unnexpected '" + token.getValue() + "'");
             conteudo();
 
             System.out.println("Compilado com sucesso! Você é um programador pika das galaxias");
@@ -62,7 +64,6 @@ public class Parser {
 
     void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
         do{
-//            nextToken();
             if (tokenEquals("EOF"))
                 throw new SyntaxError("Unnexpected End Of File");
             if(first.declaracao.contains(token.getMark())) {
@@ -71,7 +72,6 @@ public class Parser {
             }
             else if(first.comando.contains(token.getMark())) {
                 comando();
-//                nextToken();
             }
         } while(!tokenEquals("SP_CHAR_CLOSE_BRACES"));
     }
@@ -140,7 +140,7 @@ public class Parser {
     }
 
     private void operacao_for() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
-        if (!tokenEquals("ID"))
+        if (!first.operacao_for.contains(token.getMark()))
             throw new SyntaxError("Syntax error. ID expected");
 
         nextToken();
@@ -164,8 +164,8 @@ public class Parser {
 
     private void fim_declaracao_for() throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
         nextToken();
-        if (!tokenEquals("ARI_OP_ATTRIBUTION") && !tokenEquals("SP_CHAR_CLOSE_SEMICOLON"))
-            throw new SyntaxError("Syntax error. ';' expected.");
+        if (!first.fim_declaracao_for.contains(token.getMark()))
+            throw new SyntaxError("Syntax error. '=' or ';' expected.");
 
         if(tokenEquals("ARI_OP_ATTRIBUTION")){
             nextToken();
@@ -173,7 +173,6 @@ public class Parser {
             if(!tokenEquals("SP_CHAR_CLOSE_SEMICOLON"))
                 throw new SyntaxError("Syntax error. ';' expected.");
         }
-//        nextToken();
     }
 
     private void comandoDOWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
@@ -266,7 +265,7 @@ public class Parser {
     }
 
     private void declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
-        //Aqui ja garante que começa com tipo_dado
+        // Aqui ja garante que começa com tipo_dado
         nextToken();
         if(!tokenEquals("ID"))
             throw new SyntaxError("Invalid declaration. identifier expected.");
@@ -301,7 +300,6 @@ public class Parser {
     }
 
     private void declaracao_inline() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
-//        nextToken();
         if(!first.declaracao_inline.contains(token.getMark()))
             throw new SyntaxError("Syntax error. ',' or ';' expected.");
 
@@ -316,7 +314,6 @@ public class Parser {
     }
 
     private void operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
-//        nextToken();
         if (!first.operacao.contains(token.getMark()))
             throw new SyntaxError("Invalid attribuition declaration");
 
@@ -334,20 +331,17 @@ public class Parser {
         if (!first.operacao_linha.contains(token.getMark()))
             throw new SyntaxError("Invalid operation");
 
-
         operacao();
 
-//        nextToken();
-        if(!tokenEquals("SP_CHAR_CLOSE_PARENTHESES") && !first.expressao_operacao.contains(token.getMark()))
-            throw new SyntaxError("Syntax error. Expected ')'");
+        if(!tokenEquals("SP_CHAR_CLOSE_PARENTHESES") && !first.operacao.contains(token.getMark()))
+            throw new SyntaxError("Syntax error. Expected ')' oir ';'");
 
         nextToken();
         extensor_operacao();
     }
 
     private void expressao_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
-//        nextToken();
-        if(!first.operando.contains(token.getMark()))
+        if(!first.expressao_operacao.contains(token.getMark()))
             throw new SyntaxError("Syntax erro. Operando expected.");
 
         expressao_operacao_linha();
@@ -355,19 +349,15 @@ public class Parser {
 
     private void expressao_operacao_linha() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
         nextToken();
-        if(!first.operador_aritmetico.contains(token.getMark()))
+        if(!first.expressao_operacao_linha.contains(token.getMark()))
             return;
 
         nextToken();
-        if(!first.operando.contains(token.getMark()))
-            throw new SyntaxError("Syntax erro. Operando expected.");
-
-        nextToken();
+        operacao();
     }
 
     private void extensor_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
-//        nextToken();
-        if(!first.operador_aritmetico.contains(token.getMark()))
+        if(!first.extensor_operacao.contains(token.getMark()))
             return;
 
         nextToken();

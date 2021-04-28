@@ -8,7 +8,7 @@ import ErrorWarnings.ManyCharacters;
 import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 
-public class Scanner {
+public class LexicalAnalyser {
 	private int currentIndexMark;
 	private String currentValue;
 	private Pointer pointer;
@@ -17,7 +17,7 @@ public class Scanner {
 	private int column;
 	private int line;
 
-	public Scanner() throws IOException, NoTarget {
+	public LexicalAnalyser() throws IOException, NoTarget {
 		this.pointer = Pointer.getInstance();
 		if (this.pointer.isEOF()) {
 			throw new NoTarget();
@@ -30,7 +30,7 @@ public class Scanner {
 
 	public Token nextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
 		if (this.pointer.isEOF()) {
-			return new Token("EOF", ""+Tag.EOF);
+			return new Token(Tag.EOF.getDescription(), Tag.EOF.getDescription());
 		} else {
 			this.getNextToken();
 			Token newToken = new Token(this.currentMark.getDescription(), this.currentValue);
