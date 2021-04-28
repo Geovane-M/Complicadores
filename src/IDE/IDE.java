@@ -13,15 +13,7 @@ o Indicar último token lido.
 o Outras possibilidades: (1) linha do erro, (2) coluna do erro, etc.
 */
 
-import Parser.First;
-import ErrorWarnings.EmptyCharacter;
-import ErrorWarnings.LexicalError;
-import ErrorWarnings.ManyCharacters;
-import ErrorWarnings.NoTarget;
-import ErrorWarnings.OutOfRange;
 import Parser.Parser;
-import lexicalAnalyzer.Scanner;
-import lexicalAnalyzer.Token;
 
 public class IDE {
 	public static void main(String[] args) throws IOException {
