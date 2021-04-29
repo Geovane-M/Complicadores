@@ -1,3 +1,5 @@
 int main(){
+	float f = 1;
+	char ch = 'g';
     float teste = (8*2) + ((7/2) / (4*(9*2)));
 }

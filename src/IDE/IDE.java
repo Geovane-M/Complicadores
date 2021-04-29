@@ -2,6 +2,13 @@ package IDE;
 
 import java.io.IOException;
 
+import ErrorWarnings.EmptyCharacter;
+import ErrorWarnings.LexicalError;
+import ErrorWarnings.ManyCharacters;
+import ErrorWarnings.NoTarget;
+import ErrorWarnings.OutOfRange;
+import ErrorWarnings.SyntaxError;
+
 // -----------------------------------------
 /*
 • Ler arquivo texto com código na linguagem C
@@ -14,10 +21,10 @@ o Outras possibilidades: (1) linha do erro, (2) coluna do erro, etc.
 */
 
 import Parser.Parser;
+import lexicalAnalyzer.Tag;
 
 public class IDE {
 	public static void main(String[] args) throws IOException {
-		// CRIAR EOF
 //		try {
 //			Scanner scanner = new Scanner();
 //			Token token;
@@ -29,9 +36,28 @@ public class IDE {
 //					System.out.println(token);
 //				}
 //			}
-		Parser parser = new Parser();
-		parser.programa();
-//
-//		} catch ()
+		for(Tag tag : Tag.values()) {
+			System.out.println(tag.getDescription().equals("INT"));
+		}
+		Parser parser;
+		try {
+			parser = new Parser();
+			parser.programa();
+			System.out.println("Compilado com sucesso! Você é um programador pika das galaxias");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoTarget e) {
+			e.printStackTrace();
+		}catch (OutOfRange e) {
+			e.printStackTrace();
+		} catch (EmptyCharacter e) {
+			e.printStackTrace();
+		} catch (LexicalError e) {
+			e.printStackTrace();
+		} catch (ManyCharacters e) {
+			e.printStackTrace();
+		} catch (SyntaxError e) {
+			e.printStackTrace();
+		}
 	}
 }
