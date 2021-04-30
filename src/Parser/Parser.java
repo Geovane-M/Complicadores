@@ -25,34 +25,15 @@ public class Parser {
 		return this.token.getMark().equals(mark);
 	}
 
-	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError, SyntaxErrorMain {
-		this.nextToken();
-		if (!tokenEquals("INT"))
-			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
+	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError {
+		conteudo_antes_main();
 
 		nextToken();
-		if (!tokenEquals("MAIN"))
-			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError() + "\nin token: "+ this.token.getValue());
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_OPEN_PARENTHESES"))
-			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
-			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
-			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
-
-		nextToken();
-		if (!first.conteudo.contains(token.getMark()))
-			throw new SyntaxError("unnexpected '" + token.getValue() + "'");
-
 		conteudo();
+
+		nextToken();
 		if (!tokenEquals("EOF"))
-		    throw new SyntaxError("Error. EOF expected");
+			throw new SyntaxError("Unnexpected EOF expected");
 	}
 
 	private void conteudo_antes_main() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
@@ -101,6 +82,7 @@ public class Parser {
         if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
             throw new SyntaxError("Syntax error. Expected '{' found '" + token.getMark() + "'");
 
+        nextToken();
         conteudo();
 
         retorno();
@@ -111,13 +93,16 @@ public class Parser {
     }
 
     private void retorno() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
-        nextToken();
         if (!tokenEquals("RETURN"))
             throw new SyntaxError("Syntax error . Return expected");
 
         nextToken();
-        if(!first.tipo_dado.contains(token.getMark()))
+        if(!first.valor_dado.contains(token.getMark()))
             throw new SyntaxError("Syntax error . Data tipe expected");
+
+        nextToken();
+		if (!tokenEquals(Tag.SP_CHAR_SEMICOLON.getDescription()))
+			throw new SyntaxError("Syntax error . ';' expected");
     }
 
     void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
@@ -336,10 +321,6 @@ public class Parser {
 		else if (tokenEquals("SP_CHAR_OPEN_PARENTHESES")){
 		    nextToken();
 		    if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
-                throw new SyntaxError("Invalid declaration. ')' expected");
-
-            nextToken();
-            if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
                 throw new SyntaxError("Invalid declaration. ')' expected");
 
             nextToken();

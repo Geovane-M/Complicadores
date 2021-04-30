@@ -52,12 +52,12 @@ public class First {
         }
     };
 
-    public final Hashtable<String, String> tipo_dado = new Hashtable<>()
+    public final Hashtable<String, String> valor_dado = new Hashtable<>()
     {
         {
-            put("INT", "INT");
-            put("CHAR", "CHAR");
-            put("FLOAT", "FLOAT");
+            put("INTEGER","INTEGER");
+            put("CHARACTER", "CHARACTER");
+            put("FLOATING_POINT", "FLOATING_POINT");
         }
     };
 
