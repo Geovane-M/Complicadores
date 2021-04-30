@@ -52,9 +52,19 @@ public class First {
         }
     };
 
+    public final Hashtable<String, String> tipo_dado = new Hashtable<>()
+    {
+        {
+            put("INT", "INT");
+            put("CHAR", "CHAR");
+            put("FLOAT", "FLOAT");
+        }
+    };
+
     public final Hashtable<String, String> fim_declaracao = new Hashtable<>()
     {
         {
+            put("SP_CHAR_OPEN_PARENTHESES", "SP_CHAR_OPEN_PARENTHESES");
             put("ARI_OP_ATTRIBUTION", "ARI_OP_ATTRIBUTION");
             put("SP_CHAR_SEMICOLON", "SP_CHAR_SEMICOLON");
         }

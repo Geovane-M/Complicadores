@@ -25,43 +25,87 @@ public class Parser {
 	}
 
 	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError {
-		this.nextToken();
-		if (!tokenEquals("INT"))
-			throw new SyntaxError("Invalid main declaration. Expected 'int'");
-
-		nextToken();
-		if (!tokenEquals("MAIN"))
-			throw new SyntaxError("Invalid main declaration. Expected 'main'");
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_OPEN_PARENTHESES"))
-			throw new SyntaxError("Invalid main declaration. Expected '('");
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
-			throw new SyntaxError("Invalid main declaration. Expected ')'");
-
-		nextToken();
-		if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
-			throw new SyntaxError("Invalid main declaration. Expected '}'");
-
-		nextToken();
-		if (!first.conteudo.contains(token.getMark()))
-			throw new SyntaxError("unnexpected '" + token.getValue() + "'");
+        conteudo_antes_main();
 		conteudo();
+		if (!tokenEquals("EOF"))
+		    throw new SyntaxError("Error. EOF expected");
 	}
 
-	void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void conteudo_antes_main() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+        boolean sair = false;
+	    do{
+            nextToken();
+            if(first.comando.contains(token.getMark()))
+                comando();
+            else if (tokenEquals("INT"))
+                sair = conteudo_antes_main_linha();
+            else if(tokenEquals("FLOAT") || tokenEquals("CHAR")) {
+                nextToken();
+                if (!tokenEquals("ID"))
+                    throw new SyntaxError("Syntax error. 'Id' expected.");
+
+                fim_declaracao();
+            }
+        }while (!sair);
+    }
+
+    private boolean conteudo_antes_main_linha() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	    nextToken();
+	    if (!tokenEquals("MAIN") && !tokenEquals("ID"))
+            throw new SyntaxError("Syntax error. Unexpected");
+
+	    if (tokenEquals("MAIN")){
+	        main();
+	        return true;
+        }
+	    else{
+	        fim_declaracao();
+        }
+	    return false;
+    }
+
+    private void main() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	    nextToken();
+	    if (!tokenEquals("SP_CHAR_OPEN_PARENTHESES"))
+            throw new SyntaxError("Syntax error. Expected '(' found '" + token.getMark() + "'");
+
+	    nextToken();
+        if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
+            throw new SyntaxError("Syntax error. Expected ')' found '" + token.getMark() + "'");
+
+        nextToken();
+        if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
+            throw new SyntaxError("Syntax error. Expected '{' found '" + token.getMark() + "'");
+
+        conteudo();
+
+        retorno();
+
+        nextToken();
+        if (!tokenEquals("SP_CHAR_CLOSE_BRACES"))
+            throw new SyntaxError("Syntax error. Expected '}' found '" + token.getMark() + "'");
+    }
+
+    private void retorno() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+        nextToken();
+        if (!tokenEquals("RETURN"))
+            throw new SyntaxError("Syntax error . Return expected");
+
+        nextToken();
+        if(!first.tipo_dado.contains(token.getMark()))
+            throw new SyntaxError("Syntax error . Data tipe expected");
+    }
+
+    void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
 		do {
-			if (tokenEquals("EOF"))
-				throw new SyntaxError("Unnexpected End Of File");
 			if (first.declaracao.contains(token.getMark())) {
 				declaracao();
 				nextToken();
 			} else if (first.comando.contains(token.getMark())) {
 				comando();
 			}
-		} while (!tokenEquals("SP_CHAR_CLOSE_BRACES"));
+			else break;
+		} while (true);
 	}
 
 	void comando() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
@@ -265,6 +309,28 @@ public class Parser {
 			valor_atribuicao();
 			declaracao_inline();
 		}
+		else if (tokenEquals("SP_CHAR_OPEN_PARENTHESES")){
+		    nextToken();
+		    if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
+                throw new SyntaxError("Invalid declaration. ')' expected");
+
+            nextToken();
+            if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
+                throw new SyntaxError("Invalid declaration. ')' expected");
+
+            nextToken();
+            if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
+                throw new SyntaxError("Invalid declaration. '{' expected");
+
+            nextToken();
+            conteudo();
+
+            retorno();
+            nextToken();
+            if (!tokenEquals("SP_CHAR_CLOSE_BRACES"))
+                throw new SyntaxError("Invalid declaration. '}' expected");
+
+        }
 
 		// Se for SEMICOLON ta de boa, nem precisa fazer nada
 	}
