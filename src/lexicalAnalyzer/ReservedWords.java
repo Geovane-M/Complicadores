@@ -16,6 +16,7 @@ public class ReservedWords {
 		this.table.put("int", Tag.INT);
 		this.table.put("float", Tag.FLOAT);
 		this.table.put("char", Tag.CHAR);
+		this.table.put("return" ,Tag.RETURN);
 //		this.table.put("" ,Tag);
 	}
 	

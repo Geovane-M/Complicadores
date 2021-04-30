@@ -3,6 +3,7 @@ package Parser;
 import ErrorWarnings.*;
 
 import lexicalAnalyzer.LexicalAnalyser;
+import lexicalAnalyzer.Tag;
 import lexicalAnalyzer.Token;
 
 import java.io.IOException;
@@ -24,8 +25,31 @@ public class Parser {
 		return this.token.getMark().equals(mark);
 	}
 
-	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError {
-        conteudo_antes_main();
+	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError, SyntaxErrorMain {
+		this.nextToken();
+		if (!tokenEquals("INT"))
+			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
+
+		nextToken();
+		if (!tokenEquals("MAIN"))
+			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError() + "\nin token: "+ this.token.getValue());
+
+		nextToken();
+		if (!tokenEquals("SP_CHAR_OPEN_PARENTHESES"))
+			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
+
+		nextToken();
+		if (!tokenEquals("SP_CHAR_CLOSE_PARENTHESES"))
+			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
+
+		nextToken();
+		if (!tokenEquals("SP_CHAR_OPEN_BRACES"))
+			throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
+
+		nextToken();
+		if (!first.conteudo.contains(token.getMark()))
+			throw new SyntaxError("unnexpected '" + token.getValue() + "'");
+
 		conteudo();
 		if (!tokenEquals("EOF"))
 		    throw new SyntaxError("Error. EOF expected");

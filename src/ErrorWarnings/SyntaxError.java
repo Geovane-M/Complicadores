@@ -1,7 +1,9 @@
 package ErrorWarnings;
 
 public class SyntaxError extends Exception{
-    public SyntaxError() {
+	private static final long serialVersionUID = 1L;
+
+	public SyntaxError() {
         super("SyntaxError!");
     }
 

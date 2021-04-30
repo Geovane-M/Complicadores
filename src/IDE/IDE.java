@@ -8,6 +8,7 @@ import ErrorWarnings.ManyCharacters;
 import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 import ErrorWarnings.SyntaxError;
+import ErrorWarnings.SyntaxErrorMain;
 
 // -----------------------------------------
 /*
@@ -21,28 +22,17 @@ o Outras possibilidades: (1) linha do erro, (2) coluna do erro, etc.
 */
 
 import Parser.Parser;
-import lexicalAnalyzer.Tag;
 
 public class IDE {
-	public static void main(String[] args) throws IOException {
-//		try {
-//			Scanner scanner = new Scanner();
-//			Token token;
-//			while (true) {
-//				token = scanner.nextToken();
-//				if (token == null) {
-//					break;
-//				} else {
-//					System.out.println(token);
-//				}
-//			}
-		for(Tag tag : Tag.values()) {
-			System.out.println(tag.getDescription().equals("INT"));
-		}
+	public static void main(String[] args){
 		Parser parser;
 		try {
 			parser = new Parser();
-			parser.programa();
+			try {
+				parser.programa();
+			} catch (SyntaxErrorMain e) {
+				e.printStackTrace();
+			}
 			System.out.println("Compilado com sucesso! Você é um programador pika das galaxias");
 		} catch (IOException e) {
 			e.printStackTrace();

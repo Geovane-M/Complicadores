@@ -326,7 +326,7 @@ public class LexicalAnalyser {
 		return this.pointer.nextChar();
 	}
 
-	private String lineError() {
+	public String lineError() {
 		String stg = "";
 		stg += this.pointer.nextLine();
 		stg = stg.replace("\t", "    ");
