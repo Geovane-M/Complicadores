@@ -45,10 +45,26 @@ public class LexicalAnalyser {
 		do {
 			if (this.isNewLine()) {
 				this.updateLine();
-				if (!this.pointer.isEOF())
-					this.cr_char = this.pointer.nextChar();
+				if (!this.pointer.isEOF()) {
+					this.cr_char = this.nextChar();
+				} else {
+					return;
+				}
 			} else if (Character.isSpaceChar(this.cr_char) || this.cr_char == '\t') {
 				this.cr_char = this.nextChar();
+			} else if (this.cr_char == '/') {
+				this.cr_char = this.nextChar();
+				if (this.cr_char == '/') {
+					this.endCommentLine();
+					if (!this.pointer.isEOF())
+						this.cr_char = this.nextChar();
+				} else if (this.cr_char == '*') {
+					this.endCommentBlock();
+					if (!this.pointer.isEOF())
+						this.cr_char = this.nextChar();
+				} else {
+					this.pointer.comeBack(1);
+				}
 			} else if (Character.isDigit(this.cr_char)) {
 				this.updateMarkLocation();
 				this.currentValue += this.cr_char;
@@ -77,6 +93,36 @@ public class LexicalAnalyser {
 			}
 		} while (true);
 		if (!this.pointer.isEOF()) {
+			this.cr_char = this.nextChar();
+		}
+	}
+
+	private void endCommentLine() {
+		while (true) {
+			if (this.isNewLine()) {
+				this.updateLine();
+				return;
+			}
+			this.cr_char = this.nextChar();
+		}
+	}
+
+	private void endCommentBlock() throws LexicalError {
+		while (true) {
+			if (this.isNewLine()) {
+				this.updateLine();
+			}
+			if (this.cr_char == '*' && this.nextChar() == '/') {
+				if (this.pointer.isEOF() && this.currentMark.equals(null)) {
+					throw new LexicalError("Error: Without code\n");
+				} else {
+					if (!this.pointer.isEOF())
+						this.cr_char = this.nextChar();
+					return;
+				}
+			} else if (this.pointer.isEOF()) {
+				throw new LexicalError("Error!: Unterminated comment\n");
+			}
 			this.cr_char = this.nextChar();
 		}
 	}
@@ -301,7 +347,9 @@ public class LexicalAnalyser {
 	private boolean isNewLine() {
 		// "new line" case in windows
 		if (this.cr_char == '\r') {
-			if (this.pointer.nextChar() == '\n') {
+			if (!this.pointer.isEOF())
+				this.cr_char = this.pointer.nextChar();
+			if (this.cr_char == '\n') {
 				return true;
 			}
 			// other cases of "new line"

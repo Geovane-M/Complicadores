@@ -8,7 +8,6 @@ import ErrorWarnings.ManyCharacters;
 import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 import ErrorWarnings.SyntaxError;
-import ErrorWarnings.SyntaxErrorMain;
 
 // -----------------------------------------
 /*
@@ -27,13 +26,10 @@ public class IDE {
 	public static void main(String[] args){
 		Parser parser;
 		try {
+			long initialTime = System.nanoTime();
 			parser = new Parser();
-			try {
-				parser.programa();
-			} catch (SyntaxErrorMain e) {
-				e.printStackTrace();
-			}
-			System.out.println("Compilado com sucesso! Você é um programador pika das galaxias");
+			parser.programa();	
+			System.out.printf("Successfully compiled in %fs", (System.nanoTime() - initialTime)*Math.pow(10, -9));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NoTarget e) {

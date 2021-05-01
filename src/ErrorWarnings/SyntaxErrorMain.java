@@ -12,5 +12,4 @@ public class SyntaxErrorMain extends Exception{
 		//throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError() + "\nin token: "+ this.token.getValue());
 		//throw new SyntaxErrorMain(this.token.getLine(), this.lexicalAnalyser.lineError());
 	}
-
 }

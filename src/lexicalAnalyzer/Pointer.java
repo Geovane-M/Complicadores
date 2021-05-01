@@ -64,4 +64,8 @@ public class Pointer {
 	String nextLine() {
 		return this.scanner.nextLine();
 	}
+	
+	void jumpLine() {
+		this.index += 1 + (this.index - this.scanner.nextLine().length());
+	}
 }
