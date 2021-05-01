@@ -8,76 +8,18 @@ int main(){
 *comentário de bloco
 *comentário de bloco
 */
-
-int variLoka = 0;
+    /*
+    int variLoka = 0;
 	for(int i = 0; i < 10; i = i + 1){
 		variLoka = 3.14*i;
-	}
+	} */
 	return 0;
 }
 
-//Como os comentários agora funcionam é só mover o '/*' para baixo dos problemas e executar ;)
-
-/*
-
-//Problema 1______________________________________________
-
-int main(){
-	int main = 0;
-    return 0;
-} 1
-
-//Problema 2______________________________________________
-
-int main(int 0){// não aceita parâmetros
-	int main = 0;
+int k (){
     return 0;
 }
 
-//Problema 3______________________________________________
-
-int function(){
-	int var = 0;
-	return var; //deveria retornar qualquer id
-}
-
-int main(){
-	int main = 0;
-	//hahaha
-	function(); //não consegue chamar função ( "id();" )
-    return 0;
-}
-
-//Problema 4______________________________________________
-
-int function(){ //Aceitando sketch sem main
-	int var = 0;
-	return 0;
-}
-
-//Problema 5______________________________________________
-
-int main(){
-	int variLoka = 0;
-	for(int i = 0; i < 10; i = i + 1){
-		variLoka +=- 3.14*i;// deveria funcionar :)))))
-	}
-	return 0;
-}
-
-//Problema 6______________________________________________
-
-int main(){
-	int variLoka = 0;
-	for(int i = 0; i < 10; i = i + 1){
-		variLoka = 3.14*i;
-	}
-	return 0;
-}
-
-//################ACEITANDO DOIS MAIN
-
-int main(){
-return 0;
-}
-*/
+// Seu analisador lexico continua com o problema de ter que colocar
+// um espaço no ultimo comando que não é termina com "}". Por exemplo, o K() abaixo
+k();

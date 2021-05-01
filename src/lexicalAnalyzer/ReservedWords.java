@@ -7,7 +7,7 @@ public class ReservedWords {
 
 	public ReservedWords() {
 		this.table = new Hashtable<String, Tag>();
-		//this.table.put("main", Tag.MAIN);
+		this.table.put("main", Tag.MAIN);
 		this.table.put("if", Tag.IF);
 		this.table.put("else", Tag.ELSE);
 		this.table.put("while", Tag.WHILE);

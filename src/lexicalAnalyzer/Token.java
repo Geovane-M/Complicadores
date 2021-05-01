@@ -1,24 +1,24 @@
 package lexicalAnalyzer;
 public class Token{
 
-    private final String Mark;
+    private final Tag Mark;
     private long line;
     private long column;
     private final String value;
 
-    Token(String name, long line, long column, String actual_value){
-        this.Mark = name;
+    Token(Tag mark, long line, long column, String actual_value){
+        this.Mark = mark;
         this.line = line;
         this.column = column;
         this.value = actual_value;
     }
 
-    public Token(String name, String value) {
-    	this.Mark = name;
+    public Token(Tag mark, String value) {
+    	this.Mark = mark;
     	this.value = value;
     }
 
-	public String getMark() {
+	public Tag getMark() {
 		return Mark;
 	}
 

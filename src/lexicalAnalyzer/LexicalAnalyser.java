@@ -30,10 +30,10 @@ public class LexicalAnalyser {
 
 	public Token nextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
 		if (this.pointer.isEOF()) {
-			return new Token(Tag.EOF.getDescription(), Tag.EOF.getDescription());
+			return new Token(Tag.EOF, Tag.EOF.getDescription());
 		} else {
 			this.getNextToken();
-			Token newToken = new Token(this.currentMark.getDescription(), this.currentValue);
+			Token newToken = new Token(this.currentMark, this.currentValue);
 			newToken.setColumn(this.currentIndexMark);
 			newToken.setLine(this.line);
 			return newToken;
