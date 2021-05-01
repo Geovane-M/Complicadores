@@ -11,8 +11,9 @@ import ErrorWarnings.OutOfRange;
 public class LexicalAnalyser {
 	private int currentIndexMark;
 	private String currentValue;
-	private Pointer pointer;
 	private Tag currentMark;
+	private Pointer pointer;
+	private boolean flag;
 	private char cr_char;
 	private int column;
 	private int line;
@@ -24,14 +25,25 @@ public class LexicalAnalyser {
 		} else {
 			this.line = 1;
 			this.column = 0;
+			this.flag = false;
 			this.cr_char = this.nextChar();
 		}
 	}
 
 	public Token nextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
-		if (this.pointer.isEOF()) {
-			return new Token(Tag.EOF, Tag.EOF.getDescription());
-		} else {
+		if(this.flag) {
+			this.currentMark = Tag.EOF;
+			this.currentValue  = Tag.EOF.getDescription();
+			Token newToken = new Token(this.currentMark, this.currentValue);
+			return newToken;
+		}else if(this.pointer.isEOF()) {
+			this.getNextToken();
+			Token newToken = new Token(this.currentMark, this.currentValue);
+			newToken.setColumn(this.currentIndexMark);
+			newToken.setLine(this.line);
+			this.flag = true;
+			return newToken;
+		}else {
 			this.getNextToken();
 			Token newToken = new Token(this.currentMark, this.currentValue);
 			newToken.setColumn(this.currentIndexMark);
@@ -51,7 +63,11 @@ public class LexicalAnalyser {
 					return;
 				}
 			} else if (Character.isSpaceChar(this.cr_char) || this.cr_char == '\t') {
-				this.cr_char = this.nextChar();
+				if (!this.pointer.isEOF()) {
+					this.cr_char = this.nextChar();
+				} else {
+					return;
+				}
 			} else if (this.cr_char == '/') {
 				this.cr_char = this.nextChar();
 				if (this.cr_char == '/') {
@@ -86,7 +102,7 @@ public class LexicalAnalyser {
 				this.updateMarkLocation();
 				this.currentValue += this.cr_char;
 				this.currentMark = Tag.CHARACTER;
-				this.endCharacter_();
+				this.endCharacter();
 				return;
 			} else {
 				throw new LexicalError(this.line, this.lineError());
@@ -103,7 +119,8 @@ public class LexicalAnalyser {
 				this.updateLine();
 				return;
 			}
-			this.cr_char = this.nextChar();
+			if (!this.pointer.isEOF())
+				this.cr_char = this.nextChar();
 		}
 	}
 
@@ -123,7 +140,8 @@ public class LexicalAnalyser {
 			} else if (this.pointer.isEOF()) {
 				throw new LexicalError("Error!: Unterminated comment\n");
 			}
-			this.cr_char = this.nextChar();
+			if (!this.pointer.isEOF())
+				this.cr_char = this.nextChar();
 		}
 	}
 
@@ -325,7 +343,7 @@ public class LexicalAnalyser {
 		}
 	}
 
-	private void endCharacter_() throws ManyCharacters, LexicalError, EmptyCharacter {
+	private void endCharacter() throws ManyCharacters, LexicalError, EmptyCharacter {
 		this.cr_char = this.nextChar();
 		if (Character.isLetterOrDigit(this.cr_char) || Character.isSpaceChar(this.cr_char)) {
 			this.currentValue += this.cr_char;

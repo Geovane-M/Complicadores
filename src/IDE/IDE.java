@@ -9,17 +9,6 @@ import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 import ErrorWarnings.SyntaxError;
 
-// -----------------------------------------
-/*
-• Ler arquivo texto com código na linguagem C
-• Implementar método que retorne próximo token do texto, indicando seu tipo (“getNextToken(): Token”).
-• Implementar método que imprima todos os tokens encontrados e respectivos tipos.
-• O programa deverá imprimir mensagens de erro adequada ao problema encontrado:
-o Mensagem deve ser específica: que tipo de erro? (ex. nome de variável inválida, operado lógico inválido, etc.)
-o Indicar último token lido.
-o Outras possibilidades: (1) linha do erro, (2) coluna do erro, etc.
-*/
-
 import Parser.Parser;
 
 public class IDE {
@@ -46,4 +35,5 @@ public class IDE {
 			e.printStackTrace();
 		}
 	}
+	
 }
