@@ -1,25 +1,10 @@
 int main(){
-
-//comentário de linha
-
-/*comentário de bloco
-*comentário de bloco
-*comentário de bloco
-*comentário de bloco
-*comentário de bloco
-*/
-    /*
-    int variLoka = 0;
-	for(int i = 0; i < 10; i = i + 1){
-		variLoka = 3.14*i;
-	} */
+	int i = 8 / 9;
+    /*int i = 1/2;
+    dfgd
+    dfgdf
+    */
+    //fg
+    //fgdjfg
 	return 0;
 }
-
-int k (){
-    return 0;
-}
-
-// Seu analisador lexico continua com o problema de ter que colocar
-// um espaço no ultimo comando que não é termina com "}". Por exemplo, o K() abaixo
-k();

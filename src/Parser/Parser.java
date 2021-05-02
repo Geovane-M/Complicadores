@@ -2,19 +2,19 @@ package Parser;
 
 import ErrorWarnings.*;
 
-import lexicalAnalyzer.LexicalAnalyser;
+import lexicalAnalyzer.LexicalAnalyzer;
 import lexicalAnalyzer.Tag;
 import lexicalAnalyzer.Token;
 
 import java.io.IOException;
 
 public class Parser {
-	private LexicalAnalyser lexicalAnalyser;
+	private LexicalAnalyzer lexicalAnalyser;
 	private Token token;
 	private First first = new First();
 
 	public Parser() throws IOException, NoTarget {
-		this.lexicalAnalyser = new LexicalAnalyser();
+		this.lexicalAnalyser = new LexicalAnalyzer();
 	}
 
 	private void nextToken() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters {
@@ -78,7 +78,7 @@ public class Parser {
 			throw new SyntaxError("')'", this.token.getValue(), this.token.getLine(), this.token.getColumn());
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_BRACES))
-			throw new SyntaxError("'{'", this.token.getValue(), this.token.getLine(), this.token.getColumn());
+			throw new SyntaxError("'{'", this.token.getValue(), this.token.getLine(), 0);
 		this.nextToken();
 		this.conteudo();
 		this.retorno();

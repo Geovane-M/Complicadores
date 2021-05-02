@@ -8,9 +8,10 @@ import ErrorWarnings.ManyCharacters;
 import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 
-public class LexicalAnalyser {
+public class LexicalAnalyzer {
 	private int currentIndexMark;
 	private String currentValue;
+	private Token currentToken;
 	private Tag currentMark;
 	private Pointer pointer;
 	private boolean flag;
@@ -18,7 +19,7 @@ public class LexicalAnalyser {
 	private int column;
 	private int line;
 
-	public LexicalAnalyser() throws IOException, NoTarget {
+	public LexicalAnalyzer() throws IOException, NoTarget {
 		this.pointer = Pointer.getInstance();
 		if (this.pointer.isEOF()) {
 			throw new NoTarget();
@@ -31,24 +32,22 @@ public class LexicalAnalyser {
 	}
 
 	public Token nextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
-		if(this.flag) {
+		if (this.flag) {
 			this.currentMark = Tag.EOF;
-			this.currentValue  = Tag.EOF.getDescription();
-			Token newToken = new Token(this.currentMark, this.currentValue);
-			return newToken;
-		}else if(this.pointer.isEOF()) {
+			this.currentValue = Tag.EOF.getDescription();
+			this.currentToken = new Token(this.currentMark, this.currentValue);
+			//System.out.println("Token fim de arquivo "+this.currentToken);
+			return this.currentToken;
+		} else {
 			this.getNextToken();
-			Token newToken = new Token(this.currentMark, this.currentValue);
-			newToken.setColumn(this.currentIndexMark);
-			newToken.setLine(this.line);
-			this.flag = true;
-			return newToken;
-		}else {
-			this.getNextToken();
-			Token newToken = new Token(this.currentMark, this.currentValue);
-			newToken.setColumn(this.currentIndexMark);
-			newToken.setLine(this.line);
-			return newToken;
+			this.currentToken = new Token(this.currentMark, this.currentValue);
+			this.currentToken.setColumn(this.currentIndexMark);
+			this.currentToken.setLine(this.line);
+			//System.out.println("Normal token"+this.currentToken);
+			if (this.pointer.isEOF()) {
+				this.flag = true;
+			}
+			return this.currentToken;
 		}
 	}
 
@@ -57,36 +56,18 @@ public class LexicalAnalyser {
 		do {
 			if (this.isNewLine()) {
 				this.updateLine();
-				if (!this.pointer.isEOF()) {
-					this.cr_char = this.nextChar();
-				} else {
-					return;
-				}
+				if (!this.pointer.isEOF())
+					this.cr_char = this.pointer.nextChar();
 			} else if (Character.isSpaceChar(this.cr_char) || this.cr_char == '\t') {
-				if (!this.pointer.isEOF()) {
-					this.cr_char = this.nextChar();
-				} else {
-					return;
-				}
-			} else if (this.cr_char == '/') {
 				this.cr_char = this.nextChar();
-				if (this.cr_char == '/') {
-					this.endCommentLine();
-					if (!this.pointer.isEOF())
-						this.cr_char = this.nextChar();
-				} else if (this.cr_char == '*') {
-					this.endCommentBlock();
-					if (!this.pointer.isEOF())
-						this.cr_char = this.nextChar();
-				} else {
-					this.pointer.comeBack(1);
-				}
 			} else if (Character.isDigit(this.cr_char)) {
 				this.updateMarkLocation();
 				this.currentValue += this.cr_char;
 				this.currentMark = Tag.INTEGER;
 				this.endNumeric();
 				return;
+			} else if (this.isComment()) {
+				//apenas ignora o comentário
 			} else if (this.isArithmeticOp()) {
 				break;
 			} else if (this.isRelationalOp()) {
@@ -111,6 +92,24 @@ public class LexicalAnalyser {
 		if (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
 		}
+	}
+
+	private boolean isComment() throws LexicalError {
+		boolean okay = true;
+		if (this.cr_char == '/'){
+			char helper = this.pointer.nextChar();
+			if(helper == '/') {
+				this.endCommentLine();
+			}else if(helper == '*') {
+				this.endCommentBlock();
+			}else {
+				this.pointer.comeBack(1);
+				okay = false;
+			}
+		}else {
+			okay = false;
+		}
+		return okay;
 	}
 
 	private void endCommentLine() {
@@ -139,9 +138,9 @@ public class LexicalAnalyser {
 				}
 			} else if (this.pointer.isEOF()) {
 				throw new LexicalError("Error!: Unterminated comment\n");
-			}
-			if (!this.pointer.isEOF())
+			} else {
 				this.cr_char = this.nextChar();
+			}
 		}
 	}
 

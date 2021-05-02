@@ -1,4 +1,10 @@
 int main(){
-    int i = 1/2;
+	int i = 8 / 9;
+    /*int i = 1/2;
+    dfgd
+    dfgdf
+    */
+    //fg
+    //fgdjfg
 	return 0;
 }

@@ -62,7 +62,9 @@ public class Pointer {
 	}
 
 	String nextLine() {
+		if(this.scanner.hasNextLine())
 		return this.scanner.nextLine();
+		else return "";
 	}
 		
 	void jumpLine() {
