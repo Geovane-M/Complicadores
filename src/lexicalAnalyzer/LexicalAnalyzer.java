@@ -36,14 +36,14 @@ public class LexicalAnalyzer {
 			this.currentMark = Tag.EOF;
 			this.currentValue = Tag.EOF.getDescription();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
-			//System.out.println("Token fim de arquivo "+this.currentToken);
+			System.out.println("Token fim de arquivo "+this.currentToken);
 			return this.currentToken;
 		} else {
 			this.getNextToken();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
 			this.currentToken.setColumn(this.currentIndexMark);
 			this.currentToken.setLine(this.line);
-			//System.out.println("Normal token"+this.currentToken);
+			System.out.println("Normal token"+this.currentToken);
 			if (this.pointer.isEOF()) {
 				this.flag = true;
 			}
@@ -86,6 +86,7 @@ public class LexicalAnalyzer {
 				this.endCharacter();
 				return;
 			} else {
+				this.updateMarkLocation();
 				throw new LexicalError(this.line, this.lineError());
 			}
 		} while (true);
@@ -395,10 +396,11 @@ public class LexicalAnalyzer {
 		String stg = "";
 		stg += this.pointer.nextLine();
 		stg = stg.replace("\t", "    ");
-		int position = stg.indexOf(this.cr_char);
 		stg += "\n";
-		for (int i = 0; i < position; i += 1) {
-			stg += "-";
+		for (int i = 0; i < this.currentIndexMark; i += 1) {
+			if(i > 0) {
+				stg += "-";
+			}
 		}
 		stg += "^";
 		return stg;

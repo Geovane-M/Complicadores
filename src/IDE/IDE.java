@@ -9,14 +9,10 @@ import ErrorWarnings.NoTarget;
 import ErrorWarnings.OutOfRange;
 import ErrorWarnings.SyntaxError;
 import Parser.Parser;
-import lexicalAnalyzer.LexicalAnalyzer;
-import lexicalAnalyzer.Tag;
-import lexicalAnalyzer.Token;
-
 public class IDE {
 	public static void main(String[] args){
 		Parser parser;
-
+		
 		try {
 			long initialTime = System.nanoTime();
 			parser = new Parser();
