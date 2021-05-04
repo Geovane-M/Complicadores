@@ -57,8 +57,9 @@ public class LexicalAnalyzer {
 			if (this.isNewLine()) {
 				this.updateLine();
 				if (!this.pointer.isEOF())
-					this.cr_char = this.pointer.nextChar();
+					this.cr_char = this.nextChar();
 			} else if (Character.isSpaceChar(this.cr_char) || this.cr_char == '\t') {
+				if(this.cr_char == '\t')this.column += 4;
 				this.cr_char = this.nextChar();
 			} else if (Character.isDigit(this.cr_char)) {
 				this.updateMarkLocation();
@@ -116,7 +117,7 @@ public class LexicalAnalyzer {
 	private void endCommentLine() {
 		while (true) {
 			if (this.isNewLine()) {
-				this.updateLine();
+				//this.updateLine();
 				return;
 			}
 			if (!this.pointer.isEOF())
@@ -379,7 +380,7 @@ public class LexicalAnalyzer {
 
 	private void updateLine() {
 		this.line++;
-		this.column = 1;
+		this.column = 0;
 		this.pointer.nextLine();
 	}
 
@@ -395,7 +396,7 @@ public class LexicalAnalyzer {
 	public String lineError() {
 		String stg = "";
 		stg += this.pointer.nextLine();
-		stg = stg.replace("\t", "    ");
+		stg = stg.replace("\t", "     ");
 		stg += "\n";
 		for (int i = 0; i < this.currentIndexMark; i += 1) {
 			if(i > 0) {
