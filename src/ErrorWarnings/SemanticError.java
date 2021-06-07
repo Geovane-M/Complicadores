@@ -13,6 +13,6 @@ public class SemanticError extends Exception{
     }
 
     public SemanticError(String expected, String found, long line, String column) {
-        System.err.println("Semantic Error: Expected '" + expected.toLowerCase() +"' found '"+ found +"' at line " +line+ "\n"+ column);
+        System.err.println("Semantic Error: Expected '" + expected.toLowerCase() +"' found '"+ found.toLowerCase()  +"' at line " +line+ "\n"+ column);
     }
 }

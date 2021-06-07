@@ -12,7 +12,7 @@ import java.util.Hashtable;
 import java.util.Stack;
 
 public class Parser {
-	private Tag tipo;
+	private SemanticType tipo;
 	private Token token;
 	private long currentScope;
 	private First first = new First();
@@ -52,6 +52,7 @@ public class Parser {
 			else if (this.tokenEquals(Tag.INT))
 				sair = this.conteudo_antes_main_linha();
 			else if (this.tokenEquals(Tag.FLOAT) || this.tokenEquals(Tag.CHAR)) {
+				this.tipo = SemanticType.valueOf(this.token.getMark().name()); 
 				this.nextToken();
 				if (!this.tokenEquals(Tag.ID))
 					throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
@@ -64,7 +65,7 @@ public class Parser {
 
 	private boolean conteudo_antes_main_linha()
 			throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
-		this.tipo = this.token.getMark();
+		this.tipo = SemanticType.valueOf(this.token.getMark().name());
 		this.nextToken();
 		if (!this.tokenEquals(Tag.MAIN) && !this.tokenEquals(Tag.ID))
 			throw new SyntaxError(Tag.MAIN.getDescription() + " or Identifier", this.token.getValue(),
@@ -131,7 +132,7 @@ public class Parser {
 		}
 	}
 
-	private void atribuicao_ou_chamada() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void atribuicao_ou_chamada() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		if (!this.first.atribuicao_ou_chamada.contains(this.token.getMark())
 				&& !this.first.operador_aritmetico.contains(this.token.getMark()))
 			throw new SyntaxError("function call or variable atribuition after Identifier", this.token.getValue(),
@@ -252,7 +253,7 @@ public class Parser {
 		this.nextToken();
 	}
 
-	private void operacao_for() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void operacao_for() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		if (!this.first.operacao_for.contains(this.token.getMark()))
 			throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
@@ -381,7 +382,7 @@ public class Parser {
 		this.nextToken();
 	}
 
-	private void condicao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void condicao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		// Não aceita, por exemplo, if(id)
 		this.nextToken();
 		this.operacao();
@@ -394,7 +395,7 @@ public class Parser {
 
 	private void declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		// Aqui ja garante que começa com tipo_dado
-		this.tipo = this.token.getMark();
+		this.tipo = SemanticType.valueOf(this.token.getMark().name());
 		this.nextToken();
 		if (!this.tokenEquals(Tag.ID)) {
 			throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
@@ -442,9 +443,7 @@ public class Parser {
 		this.nextToken();
 		if (!this.first.operacao.contains(this.token.getMark()))
 			throw new SyntaxError("Invalid attribuition declaration");
-		if(!this.token.getMark().equals(this.tipo))
-			throw new SemanticError(this.tipo.getDescription(), this.token.getMark().getDescription(), this.token.getLine(),
-					this.lexicalAnalyzer.lineError());
+		this.verificaTipo();
 		if (this.tokenEquals(Tag.CHARACTER)) {
 			this.nextToken();
 			return;
@@ -466,11 +465,11 @@ public class Parser {
 		this.fim_declaracao();
 	}
 
-	private void operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		if (!this.first.operacao.contains(this.token.getMark()))
 			throw new SyntaxError("Invalid attribuition declaration at " + this.token.getLine() + ":\n"
 					+ this.lexicalAnalyzer.lineError());
-
+		
 		if (this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES)) {
 			this.operacao_linha();
 		} else {
@@ -479,20 +478,21 @@ public class Parser {
 		}
 	}
 
-	private void operacao_linha() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void operacao_linha() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		this.nextToken();
 		if (!this.first.operacao_linha.contains(this.token.getMark()))
 			throw new SyntaxError("( or expression", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
+		if(!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
+			this.verificaTipo();
 		this.operacao();
-
 		if (!this.tokenEquals(Tag.SP_CHAR_CLOSE_PARENTHESES) && !this.first.operacao.contains(this.token.getMark()))
 			throw new SyntaxError(")", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 		this.nextToken();
 		this.extensor_operacao();
 	}
 
-	private void expressao_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void expressao_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		if (!this.first.expressao_operacao.contains(this.token.getMark()))
 			throw new SyntaxError("expression", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
@@ -500,7 +500,7 @@ public class Parser {
 	}
 
 	private void expressao_operacao_linha()
-			throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+			throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		this.nextToken();
 		if (!this.first.expressao_operacao_linha.contains(this.token.getMark()))
 			return;
@@ -508,10 +508,16 @@ public class Parser {
 		this.operacao();
 	}
 
-	private void extensor_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void extensor_operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		if (!this.first.extensor_operacao.contains(this.token.getMark()))
 			return;
 		this.nextToken();
 		this.operacao();
+	}
+	
+	private void verificaTipo() throws SemanticError {
+		if(!this.token.getMark().getDescription().equals(this.tipo.getDescription()))
+			throw new SemanticError(this.tipo.getDescription(), this.token.getMark().getDescription(), this.token.getLine(),
+					this.lexicalAnalyzer.lineError());
 	}
 }
