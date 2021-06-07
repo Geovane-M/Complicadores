@@ -4,7 +4,7 @@ public class SyntaxError extends Exception{
 	private static final long serialVersionUID = 1L;
 
 	public SyntaxError() {
-        super("SyntaxError!");
+        super("Syntax Error!");
     }
 	
 	public SyntaxError(String message) {

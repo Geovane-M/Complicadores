@@ -36,19 +36,16 @@ public class LexicalAnalyzer {
 			this.currentMark = Tag.EOF;
 			this.currentValue = Tag.EOF.getDescription();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
-			System.out.println("Token fim de arquivo "+this.currentToken);
-			return this.currentToken;
+			//System.out.println("Token fim de arquivo "+this.currentToken);
 		} else {
 			this.getNextToken();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
 			this.currentToken.setColumn(this.currentIndexMark);
 			this.currentToken.setLine(this.line);
-			System.out.println("Normal token"+this.currentToken);
-			if (this.pointer.isEOF()) {
-				this.flag = true;
-			}
-			return this.currentToken;
+			//System.out.println("Normal token"+this.currentToken);
 		}
+		
+		return this.currentToken;
 	}
 
 	private void getNextToken() throws OutOfRange, ManyCharacters, LexicalError, EmptyCharacter {
@@ -93,6 +90,8 @@ public class LexicalAnalyzer {
 		} while (true);
 		if (!this.pointer.isEOF()) {
 			this.cr_char = this.nextChar();
+		}else {
+			this.flag = true;
 		}
 	}
 
@@ -394,7 +393,7 @@ public class LexicalAnalyzer {
 	}
 
 	public String lineError() {
-		String stg = "";
+		String stg = "\n";
 		stg += this.pointer.nextLine();
 		stg = stg.replace("\t", "     ");
 		stg += "\n";

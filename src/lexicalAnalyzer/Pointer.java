@@ -44,7 +44,7 @@ public class Pointer {
 		this.EOF = this.data.length();
 	}
 
-	Character nextChar() {
+	Character nextChar(){
 		Character ch = null;
 		if (!this.isEOF()) {
 			ch = this.data.charAt(index);
@@ -56,7 +56,7 @@ public class Pointer {
 	public boolean isEOF() {
 		return this.index >= this.EOF;
 	}
-
+	
 	public void comeBack(int num) {
 		this.index -= num;
 	}

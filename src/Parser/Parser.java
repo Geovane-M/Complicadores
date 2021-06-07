@@ -1,39 +1,49 @@
 package Parser;
 
 import ErrorWarnings.*;
-
 import lexicalAnalyzer.LexicalAnalyzer;
 import lexicalAnalyzer.Tag;
 import lexicalAnalyzer.Token;
+import semanticAnalyzer.SemanticToken;
+import semanticAnalyzer.SemanticType;
 
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Stack;
 
 public class Parser {
-	private LexicalAnalyzer lexicalAnalyzer;
+	private Tag tipo;
 	private Token token;
+	private long currentScope;
 	private First first = new First();
-
+	private LexicalAnalyzer lexicalAnalyzer;
+	private Hashtable<Token, Token> symbolTable = new Hashtable<Token, Token>();
+	private Stack<Token> pilha = new Stack<Token>();
+	
 	public Parser() throws IOException, NoTarget {
+		this.currentScope = 0;
 		this.lexicalAnalyzer = new LexicalAnalyzer();
 	}
 
 	private void nextToken() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters {
 		this.token = lexicalAnalyzer.nextToken();
+		this.token.setScope(this.currentScope);
 	}
 
 	public boolean tokenEquals(Tag mark) {
 		return this.token.getMark().equals(mark);
 	}
 
-	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError {
+	public void programa() throws OutOfRange, EmptyCharacter, LexicalError, ManyCharacters, SyntaxError, SemanticError {
 		this.conteudo_antes_main();
 		this.nextToken();
 		this.conteudo();
 		if (!this.tokenEquals(Tag.EOF))
-			throw new SyntaxError("Unexpected " + this.token.getValue() + " at " + this.token.getLine() + this.lexicalAnalyzer.lineError());
+			throw new SyntaxError("Unexpected " + this.token.getValue() + " at " + this.token.getLine()
+					+ this.lexicalAnalyzer.lineError());
 	}
 
-	private void conteudo_antes_main() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void conteudo_antes_main() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		boolean sair = false;
 		do {
 			this.nextToken();
@@ -47,14 +57,14 @@ public class Parser {
 					throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
 							this.lexicalAnalyzer.lineError());
 				this.fim_declaracao();
-			}
-			else if(this.tokenEquals(Tag.EOF))
+			} else if (this.tokenEquals(Tag.EOF))
 				throw new SyntaxError("Syntax error! main is not defined");
 		} while (!sair);
 	}
 
 	private boolean conteudo_antes_main_linha()
-			throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+			throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
+		this.tipo = this.token.getMark();
 		this.nextToken();
 		if (!this.tokenEquals(Tag.MAIN) && !this.tokenEquals(Tag.ID))
 			throw new SyntaxError(Tag.MAIN.getDescription() + " or Identifier", this.token.getValue(),
@@ -69,7 +79,7 @@ public class Parser {
 		return false;
 	}
 
-	private void main() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void main() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
 			throw new SyntaxError("(", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -94,7 +104,8 @@ public class Parser {
 
 		nextToken();
 		if (!tokenEquals(Tag.ID))
-            throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+			throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+					this.lexicalAnalyzer.lineError());
 
 //		nextToken();
 		fim_parametros();
@@ -107,51 +118,56 @@ public class Parser {
 		fim_passada_de_parametros();
 	}
 
-	private void fim_passada_de_parametros() throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
+	private void fim_passada_de_parametros()
+			throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
 		nextToken();
-		if (this.first.fim_passada_de_parametros.contains(token.getMark())){
+		if (this.first.fim_passada_de_parametros.contains(token.getMark())) {
 			nextToken();
 			if (!tokenEquals(Tag.ID))
-				throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 
 			fim_passada_de_parametros();
 		}
 	}
 
 	private void atribuicao_ou_chamada() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
-		if(!this.first.atribuicao_ou_chamada.contains(this.token.getMark())
-			&& !this.first.operador_aritmetico.contains(this.token.getMark()))
-            throw new SyntaxError("function call or variable atribuition after Identifier", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+		if (!this.first.atribuicao_ou_chamada.contains(this.token.getMark())
+				&& !this.first.operador_aritmetico.contains(this.token.getMark()))
+			throw new SyntaxError("function call or variable atribuition after Identifier", this.token.getValue(),
+					this.token.getLine(), this.lexicalAnalyzer.lineError());
 
-		if (this.first.atribuicao_ou_chamada.contains(this.token.getMark())){
+		if (this.first.atribuicao_ou_chamada.contains(this.token.getMark())) {
 			nextToken();
 			passada_de_parametros();
 
 			if (!tokenEquals(Tag.SP_CHAR_CLOSE_PARENTHESES))
-                throw new SyntaxError(")", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError(")", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 
 			nextToken();
 			if (!tokenEquals(Tag.SP_CHAR_SEMICOLON))
-                throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError(";", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 			nextToken();
-		} else{
+		} else {
 			operador_nested();
 			if (!tokenEquals(Tag.ARI_OP_ATTRIBUTION))
-                throw new SyntaxError("=", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError("=", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 			nextToken();
 			operador_nested();
 			operacao();
 			if (!tokenEquals(Tag.SP_CHAR_SEMICOLON))
-                throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError(";", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 			nextToken();
 		}
 	}
 
 	private void operador_nested() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
-		if (this.tokenEquals(Tag.ARI_OP_ADDITION) ||
-				this.tokenEquals(Tag.ARI_OP_DIVISION) ||
-				this.tokenEquals(Tag.ARI_OP_MULTIPLICATION) ||
-				this.tokenEquals(Tag.ARI_OP_SUBTRACTION))
+		if (this.tokenEquals(Tag.ARI_OP_ADDITION) || this.tokenEquals(Tag.ARI_OP_DIVISION)
+				|| this.tokenEquals(Tag.ARI_OP_MULTIPLICATION) || this.tokenEquals(Tag.ARI_OP_SUBTRACTION))
 			nextToken();
 	}
 
@@ -162,11 +178,12 @@ public class Parser {
 
 		nextToken();
 		if (!this.first.tipo_dado.contains(token.getMark()))
-            throw new SyntaxError("Data type", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+			throw new SyntaxError("Data type", this.token.getValue(), this.token.getLine(),
+					this.lexicalAnalyzer.lineError());
 
 		nextToken();
 		if (!tokenEquals(Tag.ID))
-            throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+			throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 
 		fim_parametros();
 	}
@@ -184,7 +201,7 @@ public class Parser {
 			throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 	}
 
-	void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	void conteudo() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		do {
 			if (this.first.declaracao.contains(this.token.getMark())) {
 				this.declaracao();
@@ -196,7 +213,7 @@ public class Parser {
 		} while (true);
 	}
 
-	void comando() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	void comando() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		if (this.tokenEquals(Tag.IF)) {
 			this.comandoIF();
 		} else if (this.tokenEquals(Tag.ELSE)) {
@@ -213,7 +230,7 @@ public class Parser {
 		}
 	}
 
-	private void comandoFOR() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void comandoFOR() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
 			throw new SyntaxError("(", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -249,7 +266,7 @@ public class Parser {
 		this.operacao();
 	}
 
-	private void declaracao_for() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void declaracao_for() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		if (!this.first.tipo_dado.contains(token.getMark()))
 			throw new SyntaxError("Data type", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
@@ -261,7 +278,7 @@ public class Parser {
 		this.fim_declaracao_for();
 	}
 
-	private void fim_declaracao_for() throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
+	private void fim_declaracao_for() throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!first.fim_declaracao_for.contains(token.getMark()))
 			throw new SyntaxError("= or ;", this.token.getValue(), this.token.getLine(),
@@ -275,20 +292,21 @@ public class Parser {
 		}
 	}
 
-	private void declaracao_for_inline() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void declaracao_for_inline() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		if (!this.first.declaracao_for_inline.contains(this.token.getMark()))
 			throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 
-		if (this.tokenEquals(Tag.SP_CHAR_COMMA)){
+		if (this.tokenEquals(Tag.SP_CHAR_COMMA)) {
 			nextToken();
 			if (!this.tokenEquals(Tag.ID))
-				throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+				throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+						this.lexicalAnalyzer.lineError());
 
 			fim_declaracao_for();
 		}
 	}
 
-	private void comandoDOWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void comandoDOWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_BRACES))
 			throw new SyntaxError("{", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -315,7 +333,7 @@ public class Parser {
 		this.nextToken();
 	}
 
-	private void comandoWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void comandoWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
 			throw new SyntaxError("(", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -334,7 +352,7 @@ public class Parser {
 		this.nextToken();
 	}
 
-	private void comandoELSE_IF() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void comandoELSE_IF() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (this.tokenEquals(Tag.IF))
 			this.comandoIF();
@@ -345,7 +363,7 @@ public class Parser {
 		}
 	}
 
-	private void comandoIF() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void comandoIF() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
 			throw new SyntaxError("(", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -374,17 +392,22 @@ public class Parser {
 		this.operacao();
 	}
 
-	private void declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		// Aqui ja garante que começa com tipo_dado
+		this.tipo = this.token.getMark();
 		this.nextToken();
-		if (!this.tokenEquals(Tag.ID))
+		if (!this.tokenEquals(Tag.ID)) {
 			throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
-
-		this.fim_declaracao();
+		} else {
+			SemanticToken token = new SemanticToken(this.token.getMark(), this.token.getValue());
+			token.setType(SemanticType.valueOf(this.tipo.name()));
+			this.pilha.push(token);
+			this.fim_declaracao();
+		}
 	}
 
-	private void fim_declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void fim_declaracao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
 		if (!this.first.fim_declaracao.contains(this.token.getMark()))
 			throw new SyntaxError("= or ;", this.token.getValue(), this.token.getLine(),
@@ -415,11 +438,13 @@ public class Parser {
 		// Se for SEMICOLON ta de boa, nem precisa fazer nada
 	}
 
-	private void valor_atribuicao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange {
+	private void valor_atribuicao() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
 		this.nextToken();
-		if (!this.tokenEquals(Tag.CHARACTER) && !this.first.operacao.contains(this.token.getMark()))
+		if (!this.first.operacao.contains(this.token.getMark()))
 			throw new SyntaxError("Invalid attribuition declaration");
-
+		if(!this.token.getMark().equals(this.tipo))
+			throw new SemanticError(this.tipo.getDescription(), this.token.getMark().getDescription(), this.token.getLine(),
+					this.lexicalAnalyzer.lineError());
 		if (this.tokenEquals(Tag.CHARACTER)) {
 			this.nextToken();
 			return;
@@ -427,14 +452,13 @@ public class Parser {
 			this.operacao();
 	}
 
-	private void declaracao_inline() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void declaracao_inline() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
 		if (!this.first.declaracao_inline.contains(this.token.getMark()))
 			throw new SyntaxError("Operation", this.token.getValue(), this.token.getLine(),
 					this.lexicalAnalyzer.lineError());
 
 		if (this.tokenEquals(Tag.SP_CHAR_SEMICOLON))
 			return;
-
 		this.nextToken();
 		if (!this.tokenEquals(Tag.ID))
 			throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
@@ -444,7 +468,8 @@ public class Parser {
 
 	private void operacao() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
 		if (!this.first.operacao.contains(this.token.getMark()))
-			throw new SyntaxError("Invalid attribuition declaration at " + this.token.getLine() + ":\n" + this.lexicalAnalyzer.lineError());
+			throw new SyntaxError("Invalid attribuition declaration at " + this.token.getLine() + ":\n"
+					+ this.lexicalAnalyzer.lineError());
 
 		if (this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES)) {
 			this.operacao_linha();
@@ -462,8 +487,7 @@ public class Parser {
 		this.operacao();
 
 		if (!this.tokenEquals(Tag.SP_CHAR_CLOSE_PARENTHESES) && !this.first.operacao.contains(this.token.getMark()))
-			throw new SyntaxError(")", this.token.getValue(), this.token.getLine(),
-					this.lexicalAnalyzer.lineError());
+			throw new SyntaxError(")", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 		this.nextToken();
 		this.extensor_operacao();
 	}
@@ -475,7 +499,8 @@ public class Parser {
 		this.expressao_operacao_linha();
 	}
 
-	private void expressao_operacao_linha() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
+	private void expressao_operacao_linha()
+			throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError {
 		this.nextToken();
 		if (!this.first.expressao_operacao_linha.contains(this.token.getMark()))
 			return;
