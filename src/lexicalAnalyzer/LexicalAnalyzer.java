@@ -20,7 +20,8 @@ public class LexicalAnalyzer {
 	private int line;
 
 	public LexicalAnalyzer() throws IOException, NoTarget {
-		this.pointer = Pointer.getInstance();
+//		this.pointer = Pointer.getInstance();
+		this.pointer = new Pointer();
 		if (this.pointer.isEOF()) {
 			throw new NoTarget();
 		} else {

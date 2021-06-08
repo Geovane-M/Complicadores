@@ -1,11 +1,15 @@
-//falta adicionar tipo as variveis(id);
-int k = 2;
-int c = k;
-int main(){
-	int i = 6 * 1;
-	if(i == 1){
-	}
-	//int i = 6 *;
-	i += 1;
-	return 0;
+float func1(int teste, float talvez, char af){
+    return 1.2;
+}
+int main(int vei){
+    int a;
+    float b;
+    char c;
+    func1(a,b,c);
+    func2(a, b);
+    return 1;
+}
+
+char func2(int teste, float talvezsim){
+    return 'c';
 }

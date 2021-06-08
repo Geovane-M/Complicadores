@@ -12,7 +12,7 @@ public class Pointer {
 	private int index;
 	private int EOF;
 
-	private Pointer() throws IOException {
+	public Pointer() throws IOException {
 		this.init();
 		this.index = 0;
 	}

@@ -3,7 +3,7 @@ package lexicalAnalyzer;
 public class Token {
 
 	private long line;
-	private long scope;
+	private String scope;
 	private long column;
 	private final Tag Mark;
 	private final String value;
@@ -18,6 +18,12 @@ public class Token {
 	public Token(Tag mark, String value) {
 		this.Mark = mark;
 		this.value = value;
+	}
+
+	public Token(Tag mark, String value, String scope) {
+		this.Mark = mark;
+		this.value = value;
+		this.scope = scope;
 	}
 
 	public Tag getMark() {
@@ -44,11 +50,11 @@ public class Token {
 		this.column = column;
 	}
 
-	public long getScope() {
+	public String getScope() {
 		return scope;
 	}
 
-	public void setScope(long scope) {
+	public void setScope(String scope) {
 		this.scope = scope;
 	}
 
