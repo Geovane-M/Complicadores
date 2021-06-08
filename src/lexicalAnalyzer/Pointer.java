@@ -24,15 +24,7 @@ public class Pointer {
 	}
 
 	private void init() throws IOException {
-//#################################################################################################
-		// Para facilitar os testes :) Altere o diretório de acordo com a sua máquina. 			  #
-		String directory; 																	   // #
-		if (System.getProperty("os.name").compareTo("Linux") == 0) {				  		   // #
-			directory = "/home/migeo/Documentos/eclipse-workspace/Complicadores/src/teste.txt";// #
-		} else {																			   // #
-			directory = "./src/teste.txt"; 				   	   // #
-		} 																					   // #
-//#################################################################################################
+		String directory = "./src/teste.txt";
 		File file = new File(directory);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] _data = new byte[(int) file.length()];

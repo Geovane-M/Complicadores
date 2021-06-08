@@ -1,15 +1,34 @@
-float func1(int teste, float talvez, char af){
-    return 1.2;
+float func1(float x, int y){
+    //codigo
+    return 2.0;
 }
+
 int main(int vei){
-    int a;
-    float b;
-    char c;
-    func1(a,b,c);
-    func2(a, b);
+    float f1 = 2.0;
+    float f2 = 2.0*(f1 + 2.0);
+
+    char c1 = '1';
+    char c2 = c1;
+    c1 = '7';
+
+    int a = 0;
+    int b = 3;
+    if(a < 0){
+        b = a;
+    }
+    else{
+        a = b;
+    }
+
+    for(int i = 0; i < 10; i += 1){
+        func1(f1, b);
+        func2(c2, a);
+    }
+
     return 1;
 }
 
-char func2(int teste, float talvezsim){
-    return 'c';
+int func2(char x, int y){
+    //codigo
+    return 6;
 }
