@@ -3,10 +3,9 @@ float func1(int teste, float talvez, char af){
 }
 int main(int vei){
     int a;
-    float b;
-    char c;
-    func1(a,b,c);
-    func2(a, b);
+    if(a<2.2){
+
+    }
     return 1;
 }
 

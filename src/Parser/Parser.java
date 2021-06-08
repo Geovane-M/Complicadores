@@ -10,6 +10,7 @@ import semanticAnalyzer.SemanticType;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -570,8 +571,14 @@ public class Parser {
                 throw new SemanticError("Identifier " + this.token.getValue() + " is not defined");
 
             this.tipo = identifier.getType();
-        } else
-            this.tipo = SemanticType.valueOf(this.token.getMark().name());
+        } else{
+            if(this.token.getMark().name().equals("INT"))
+                this.tipo = SemanticType.INT;
+            else if(this.token.getMark().name().equals("FLOAT"))
+                this.tipo = SemanticType.FLOAT;
+            else if(this.token.getMark().name().equals("CHAR"))
+                this.tipo = SemanticType.CHAR;
+        }
         this.operacao();
         if (!this.first.operador_relacional.contains(this.token.getMark()))
             throw new SyntaxError("Relational operator", this.token.getValue(), this.token.getLine(),
@@ -589,9 +596,7 @@ public class Parser {
                     this.lexicalAnalyzer.lineError());
 
         this.registraIdentificadorAtual();
-//		SemanticToken token = new SemanticToken(this.token.getMark(), this.token.getValue());
-//		token.setType(SemanticType.valueOf(this.tipo.name()));
-//		this.pilha.push(token);
+
         this.fim_declaracao();
     }
 
@@ -646,7 +651,7 @@ public class Parser {
 
     private void declaracao_inline() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
         if (!this.first.declaracao_inline.contains(this.token.getMark()))
-            throw new SyntaxError("Operation", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("Declaration", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         if (this.tokenEquals(Tag.SP_CHAR_SEMICOLON))
@@ -714,6 +719,7 @@ public class Parser {
             SemanticToken identifier = getIdentifier(this.token.getValue());
 
 
+            // Permite atribuir o retorno de uma função à uma variável
 //            SemanticFunctionToken functionToken = this.getFunctionIdentifier(this.token.getValue());
 //            if(functionToken != null){
 //                if (!this.tipo.getDescription().equals(functionToken.getType().getDescription()))
