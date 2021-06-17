@@ -1,7 +1,7 @@
 package semanticAnalyzer;
 
 public enum SemanticType {
-	INT("INTEGER"), FLOAT("FLOATING_POINT"), CHAR("CHARACTER"), MAIN("MAIN");
+	INT("INTEGER"), FLOAT("FLOATING_POINT"), CHAR("CHARACTER");
 
 	private final String description;
 

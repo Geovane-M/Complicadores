@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 public class SemanticFunctionToken extends SemanticToken{
     private final LinkedList<Tag> functionParams;
-    private SemanticType returnType;
+    private final SemanticType returnType;
 
     public SemanticFunctionToken(Token token, SemanticType type, LinkedList<Tag> functionParams, SemanticType returnType){
         super(token, type);

@@ -1,14 +1,9 @@
 package semanticAnalyzer;
 
-import lexicalAnalyzer.Tag;
 import lexicalAnalyzer.Token;
 
 public class SemanticToken extends Token {
-    private SemanticType type;
-
-    public SemanticToken(Tag mark, String value) {
-        super(mark, value);
-    }
+    private final SemanticType type;
 
     public SemanticToken(Token token, SemanticType type) {
         super(token.getMark(), token.getValue(), token.getScope());
@@ -17,10 +12,6 @@ public class SemanticToken extends Token {
 
     public SemanticType getType() {
         return type;
-    }
-
-    public void setType(SemanticType type) {
-        this.type = type;
     }
 
     @Override

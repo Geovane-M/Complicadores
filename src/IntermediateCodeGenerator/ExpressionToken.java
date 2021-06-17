@@ -12,12 +12,6 @@ public class ExpressionToken extends Token{
         super();
     }
 
-    public ExpressionToken(Token ariOperator, int expressionScope){
-        super();
-        this.ariOperator = ariOperator;
-        this.expressionScope = expressionScope;
-    }
-
     public ExpressionToken(String _name, Token leftOperator, Token ariOperator, Token rightOperator, int expressionScope) {
         super(_name);
         this.leftOperator = leftOperator;
