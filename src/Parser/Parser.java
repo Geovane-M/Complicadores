@@ -66,9 +66,9 @@ public class Parser {
         return this.token.getMark().equals(mark);
     }
 
-    private String generateLabel(){
-        this.labels.add("L"+(this.labels.size()+1));
-        return this.labels.get(this.labels.size()-1);
+    private String generateLabel() {
+        this.labels.add("L" + (this.labels.size() + 1));
+        return this.labels.get(this.labels.size() - 1);
     }
 
     private void generateScope() {
@@ -250,17 +250,17 @@ public class Parser {
 
     private void passada_de_parametros() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
         String currentFunctionCallParams = "(";
-        if (!this.first.passada_de_parametros.contains(token.getMark())){
-            if (this.tokenEquals(Tag.SP_CHAR_CLOSE_PARENTHESES) && this.currentFunctionToken.getFunctionParams().size() > 0){
+        if (!this.first.passada_de_parametros.contains(token.getMark())) {
+            if (this.tokenEquals(Tag.SP_CHAR_CLOSE_PARENTHESES) && this.currentFunctionToken.getFunctionParams().size() > 0) {
                 throw new SemanticError("Semantic Error! Function '" +
                         this.currentFunctionToken.getValue() +
                         "' needs " + this.currentFunctionToken.getFunctionParams().size() +
                         " parameters, but found 0.", this.token.getLine(), this.lexicalAnalyzer.lineError());
             }
-            this.expressionFunctionsCalls.add(currentFunctionCallParams+")");
+            this.expressionFunctionsCalls.add(currentFunctionCallParams + ")");
             return;
         }
-        if (this.currentFunctionToken.getFunctionParams().size() == 0){
+        if (this.currentFunctionToken.getFunctionParams().size() == 0) {
             throw new SemanticError("Semantic Error! Function '" +
                     this.currentFunctionToken.getValue() +
                     "' needs " + this.currentFunctionToken.getFunctionParams().size() +
@@ -271,8 +271,7 @@ public class Parser {
         SemanticToken identifier = this.getIdentifier(this.token.getValue());
         if (identifier == null && this.tokenEquals(Tag.ID)) {
             throw new SemanticError("Identifier '" + this.token.getValue() + "' is not defined.", this.token.getLine(), this.lexicalAnalyzer.lineError());
-        }
-        else if (!this.token.getMark().getDescription().equals(SemanticType.valueOf(currentParamType.name()).getDescription())) {
+        } else if (!this.token.getMark().getDescription().equals(SemanticType.valueOf(currentParamType.name()).getDescription())) {
             throw new SemanticError(currentParamType.getDescription(), SemanticType.valueOf(this.token.getMark().name()).getDescription(),
                     this.token.getLine(), this.lexicalAnalyzer.lineError());
         }
@@ -301,8 +300,7 @@ public class Parser {
             SemanticToken identifier = this.getIdentifier(this.token.getValue());
             if (identifier == null && this.tokenEquals(Tag.ID)) {
                 throw new SemanticError("Identifier '" + this.token.getValue() + "' is not defined.", this.token.getLine(), this.lexicalAnalyzer.lineError());
-            }
-            else if (!this.token.getMark().getDescription().equals(SemanticType.valueOf(currentParamType.name()).getDescription())) {
+            } else if (!this.token.getMark().getDescription().equals(SemanticType.valueOf(currentParamType.name()).getDescription())) {
                 throw new SemanticError(currentParamType.getDescription(), SemanticType.valueOf(this.token.getMark().name()).getDescription(),
                         this.token.getLine(), this.lexicalAnalyzer.lineError());
             }
@@ -334,19 +332,21 @@ public class Parser {
 
             nextToken();
         } else {
-            operador_nested();
+            Token nested = operador_nested();
+            if (nested != null)
+                this.nextToken();
             if (!tokenEquals(Tag.ARI_OP_ATTRIBUTION))
                 throw new SyntaxError("=", this.token.getValue(), this.token.getLine(),
                         this.lexicalAnalyzer.lineError());
+            if (nested != null) {
+                this.expressaoDaAtribuicaoAtual.add(this.attribuitionCurrentToken);
+                this.expressaoDaAtribuicaoAtual.add(nested);
+            }
             nextToken();
-//            if (this.tokenEquals(Tag.ID) && this.getFunction(this.token.getValue()) != null){
-//
-//            }
-//            else {
+
             this.expressaoAritmetica(true);
             this.gerarTokensTemporariosDeExpressoesAritmeticas(false);
             this.expressaoDaAtribuicaoAtual = new LinkedList<>();
-//            }
         }
         if (!tokenEquals(Tag.SP_CHAR_SEMICOLON))
             throw new SyntaxError(";", this.token.getValue(), this.token.getLine(),
@@ -354,10 +354,12 @@ public class Parser {
         nextToken();
     }
 
-    private void operador_nested() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange {
+    private Token operador_nested() {
         if (this.tokenEquals(Tag.ARI_OP_ADDITION) || this.tokenEquals(Tag.ARI_OP_DIVISION)
-                || this.tokenEquals(Tag.ARI_OP_MULTIPLICATION) || this.tokenEquals(Tag.ARI_OP_SUBTRACTION))
-            nextToken();
+                || this.tokenEquals(Tag.ARI_OP_MULTIPLICATION) || this.tokenEquals(Tag.ARI_OP_SUBTRACTION)) {
+            return this.token;
+        }
+        return null;
     }
 
     private void fim_parametros() throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
@@ -383,19 +385,45 @@ public class Parser {
             throw new SyntaxError(Tag.RETURN.getDescription(), this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
         this.nextToken();
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        // NÃO ESQUECE DE AJEITAR ISSO DEPOIS. O FIRST NÃO É expressão_aritmetica
-        if (!this.first.expressao_aritmetica.contains(this.token.getMark()))
-            throw new SyntaxError("Id or data value", this.token.getValue(), this.token.getLine(),
-                    this.lexicalAnalyzer.lineError());
-        if (!this.token.getMark().name().equals(this.currentFunctionReturnType.getDescription())) {
-            throw new SemanticError(this.currentFunctionReturnType.getDescription(), this.token.getMark().name(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+
+//        if (!this.first.expressao_aritmetica.contains(this.token.getMark()))
+//            throw new SyntaxError("Id or data value", this.token.getValue(), this.token.getLine(),
+//                    this.lexicalAnalyzer.lineError());
+//        if (this.token.getMark().equals(Tag.ID)){
+//            SemanticToken aux = this.getIdentifier(this.token.getValue());
+//            if (aux == null)
+//                throw new SemanticError("Identifier '" + this.token.getValue() + "' is not defined.",
+//                        this.token.getLine(), this.lexicalAnalyzer.lineError());
+//            else if (!aux.getType().equals(this.currentFunctionReturnType))
+//                throw new SemanticError("Identifier '" + this.token.getValue() + "'" +
+//                        " is not of the function return type " + this.currentFunctionReturnType.getDescription().toLowerCase()
+//                        , this.token.getLine(), this.lexicalAnalyzer.lineError());
+//        }
+//        else if (!this.token.getMark().getDescription().equals(this.currentFunctionReturnType.getDescription())) {
+//            throw new SemanticError(this.currentFunctionReturnType.getDescription(), this.token.getMark().name(), this.token.getLine(), this.lexicalAnalyzer.lineError());
+//        }
+        if (!this.currentFunctionReturnType.equals(SemanticType.CHAR)) {
+            this.currentType = this.currentFunctionReturnType;
+            this.expressaoAritmetica(false);
         }
-        this.nextToken();
+        else {
+            if (this.token.getMark().equals(Tag.ID)) {
+                SemanticToken aux = this.getIdentifier(this.token.getValue());
+                if (aux == null)
+                    throw new SemanticError("Identifier '" + this.token.getValue() + "' is not defined.",
+                            this.token.getLine(), this.lexicalAnalyzer.lineError());
+                else if (!aux.getType().equals(SemanticType.CHAR))
+                    throw new SemanticError("Identifier '" + this.token.getValue() + "'" +
+                            " is not of the function return type " + SemanticType.CHAR.getDescription().toLowerCase()
+                            , this.token.getLine(), this.lexicalAnalyzer.lineError());
+            } else if (!this.token.getMark().equals(Tag.CHARACTER))
+                throw new SemanticError("Identifier '" + this.token.getValue() + "'" +
+                        " is not of the function return type " + Tag.CHARACTER.getDescription().toLowerCase()
+                        , this.token.getLine(), this.lexicalAnalyzer.lineError());
+            this.nextToken();
+        }
+
+//        this.nextToken();
         if (!this.tokenEquals(Tag.SP_CHAR_SEMICOLON))
             throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
     }
@@ -468,11 +496,18 @@ public class Parser {
                     this.lexicalAnalyzer.lineError());
 
         this.nextToken();
-        operador_nested();
+        Token nested = operador_nested();
+        if (nested != null)
+            this.nextToken();
         if (!this.tokenEquals(Tag.ARI_OP_ATTRIBUTION))
             throw new SyntaxError("=", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
-        this.nextToken();
-        operador_nested();
+
+        if (nested != null) {
+            this.expressaoDaAtribuicaoAtual.add(this.attribuitionCurrentToken);
+            this.expressaoDaAtribuicaoAtual.add(nested);
+        }
+        nextToken();
+
         this.expressaoAritmetica(true);
         this.gerarTokensTemporariosDeExpressoesAritmeticas(false);
         this.expressaoDaAtribuicaoAtual = new LinkedList<>();
@@ -529,7 +564,7 @@ public class Parser {
 
     private void comandoDOWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
         String labelCurrentDoWhile = this.generateLabel();
-        System.out.print("\n"+labelCurrentDoWhile+" ");
+        System.out.print("\n" + labelCurrentDoWhile + " ");
 
         this.nextToken();
         if (!this.tokenEquals(Tag.SP_CHAR_OPEN_BRACES))
@@ -556,7 +591,7 @@ public class Parser {
 
         this.nextToken();
         this.printLastToken = false;
-        System.out.println("goto "+labelCurrentDoWhile);
+        System.out.println("goto " + labelCurrentDoWhile);
         if (!this.tokenEquals(Tag.SP_CHAR_SEMICOLON))
             throw new SyntaxError(";", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
         this.nextToken();
@@ -564,7 +599,7 @@ public class Parser {
 
     private void comandoWHILE() throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
         String labelCurrentWhile = this.generateLabel();
-        System.out.print("\n"+labelCurrentWhile+" ");
+        System.out.print("\n" + labelCurrentWhile + " ");
         this.nextToken();
         if (!this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES))
             throw new SyntaxError("(", this.token.getValue(), this.token.getLine(), this.lexicalAnalyzer.lineError());
@@ -586,8 +621,8 @@ public class Parser {
         this.nextToken();
         this.conteudo();
         this.nextToken();
-        System.out.println("goto "+labelCurrentWhile);
-        System.out.print("\n"+this.labels.getLast()+" ");
+        System.out.println("goto " + labelCurrentWhile);
+        System.out.print("\n" + this.labels.getLast() + " ");
         this.returnToPreviousScope();
     }
 
@@ -625,7 +660,7 @@ public class Parser {
 
         this.conteudo();
         this.nextToken();
-        System.out.print("\n"+this.labels.get(this.labels.size()-1)+" ");
+        System.out.print("\n" + this.labels.get(this.labels.size() - 1) + " ");
         this.returnToPreviousScope();
     }
 
@@ -649,14 +684,14 @@ public class Parser {
         if (!this.first.operador_relacional.contains(this.token.getMark()))
             throw new SyntaxError("Relational operator", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
-        if(invertRelOperator)
+        if (invertRelOperator)
             this.token = this.invertRelOperator(this.token);
         this.nextToken();
         this.expressaoAritmetica(false);
     }
 
-    private Token invertRelOperator(Token token){
-        switch (token.getMark().getDescription()){
+    private Token invertRelOperator(Token token) {
+        switch (token.getMark().getDescription()) {
             case "REL_OP_EQUALS" -> token = new Token(Tag.REL_OP_NOT_EQUAL_TO, "!=", token.getScope());
             case "REL_OP_NOT_EQUAL_TO" -> token = new Token(Tag.REL_OP_EQUALS, "==", token.getScope());
             case "REL_OP_GREATER_THAN" -> token = new Token(Tag.REL_OP_LESS_THAN, "<", token.getScope());
@@ -691,7 +726,7 @@ public class Parser {
         if (this.tokenEquals(Tag.ARI_OP_ATTRIBUTION)) {
             this.valor_atribuicao(true);
             // Quando uma variável receer uma função os tokens que chegam aqui são os (...)
-            if (this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES)){
+            if (this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES)) {
                 this.nextToken();
                 this.passada_de_parametros();
                 this.nextToken();
@@ -717,7 +752,7 @@ public class Parser {
             this.verificaTipo();
             this.registraIdentificadorAtual();
 
-            this.geraDefinicaoDeVariavel(declaracao,this.attribuitionCurrentToken.getValue(), this.token.getValue());
+            this.geraDefinicaoDeVariavel(declaracao, this.attribuitionCurrentToken.getValue(), this.token.getValue());
 
             this.nextToken();
         } else {
@@ -823,7 +858,7 @@ public class Parser {
         } else {
             this.verificaTipo();
             // Verifica se o identificador atribuido é uma função
-            if (this.getFunction(this.token.getValue()) != null){
+            if (this.getFunction(this.token.getValue()) != null) {
 //                if (atribuicao && this.expressaoDaAtribuicaoAtual.size() > 1)
 //                    this.expressaoDaAtribuicaoAtual.add(this.token);
                 this.currentFunctionToken = this.getFunctionIdentifier(this.token.getValue());
@@ -842,12 +877,11 @@ public class Parser {
                 SemanticFunctionToken functionIdentifier = this.getFunctionIdentifier(this.token.getValue());
                 if (functionIdentifier == null)
                     throw new SemanticError("Function '" + this.token.getValue() + "' is not defined", this.token.getLine(), this.lexicalAnalyzer.lineError());
-                else if(!functionIdentifier.getReturnType().equals(this.currentType))
+                else if (!functionIdentifier.getReturnType().equals(this.currentType))
                     throw new SemanticError(this.currentType.getDescription().toLowerCase(),
                             functionIdentifier.getReturnType().getDescription().toLowerCase(),
                             this.token.getLine(), this.lexicalAnalyzer.lineError());
-            }
-            else if (!this.currentType.getDescription().equals(identifier.getType().getDescription()))
+            } else if (!this.currentType.getDescription().equals(identifier.getType().getDescription()))
                 throw new SemanticError(this.currentType.getDescription(),
                         identifier.getType().getDescription(), this.token.getLine(), this.lexicalAnalyzer.lineError());
 
@@ -996,12 +1030,12 @@ public class Parser {
         }
 
 //        if (!declaracao) return;
-        if(temporaryTokens.size() == 0)
-            this.geraDefinicaoDeVariavel(declaracao,this.attribuitionCurrentToken.getValue(), this.expressaoDaAtribuicaoAtual.get(this.expressaoDaAtribuicaoAtual.size() - 2).getValue());
+        if (temporaryTokens.size() == 0)
+            this.geraDefinicaoDeVariavel(declaracao, this.attribuitionCurrentToken.getValue(), this.expressaoDaAtribuicaoAtual.get(this.expressaoDaAtribuicaoAtual.size() - 2).getValue());
 //            System.out.println(this.currentType.toString().toLowerCase() +
 //                    " " + this.attribuitionCurrentToken.getValue() + "=" +
 //                    (this.expressaoDaAtribuicaoAtual.get(this.expressaoDaAtribuicaoAtual.size() - 2).getValue()) + ";");
-        else if(temporaryTokens.size() == 1) {
+        else if (temporaryTokens.size() == 1) {
             ExpressionToken aux = temporaryTokens.getLast();
             String varValue = aux.getLeftOperator().getValue();
             varValue += aux.getAriOperator().getValue();
@@ -1010,8 +1044,7 @@ public class Parser {
                     declaracao,
                     this.attribuitionCurrentToken.getValue(),
                     varValue);
-        }
-        else
+        } else
             this.imprimirTokensTemporariosDeExpressoesAritmeticas(declaracao, temporaryTokens);
     }
 
