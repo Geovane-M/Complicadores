@@ -6,15 +6,21 @@ import lexicalAnalyzer.Token;
 import java.util.LinkedList;
 
 public class SemanticFunctionToken extends SemanticToken{
-    private LinkedList<Tag> functionParams;
+    private final LinkedList<Tag> functionParams;
+    private SemanticType returnType;
 
-    public SemanticFunctionToken(Token token, SemanticType type, LinkedList<Tag> functionParams){
+    public SemanticFunctionToken(Token token, SemanticType type, LinkedList<Tag> functionParams, SemanticType returnType){
         super(token, type);
         this.functionParams = functionParams;
+        this.returnType = returnType;
     }
 
     public LinkedList<Tag> getFunctionParams(){
         return this.functionParams;
+    }
+
+    public SemanticType getReturnType(){
+        return this.returnType;
     }
 
     @Override

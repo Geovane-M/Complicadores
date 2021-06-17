@@ -20,8 +20,8 @@ public class LexicalAnalyzer {
 	private int line;
 
 	public LexicalAnalyzer() throws IOException, NoTarget {
-//		this.pointer = Pointer.getInstance();
-		this.pointer = new Pointer();
+		this.pointer = Pointer.getInstance();
+//		this.pointer = new Pointer();
 		if (this.pointer.isEOF()) {
 			throw new NoTarget();
 		} else {
@@ -174,6 +174,7 @@ public class LexicalAnalyzer {
 				this.currentValue += this.cr_char;
 			} else if (this.cr_char == 'f') {
 				this.currentValue += this.cr_char;
+				this.cr_char = this.nextChar();
 				break;
 			} else {
 				if (Double.parseDouble(this.currentValue) < 1.2E-38d
@@ -405,5 +406,10 @@ public class LexicalAnalyzer {
 		}
 		stg += "^";
 		return stg;
+	}
+
+	public void restartPointer() throws IOException{
+		this.flag = false;
+		this.pointer = Pointer.restartInstance();
 	}
 }

@@ -23,6 +23,10 @@ public class Pointer {
 		return pointer;
 	}
 
+	static synchronized Pointer restartInstance() throws IOException{
+		pointer = new Pointer();
+		return pointer;
+	}
 	private void init() throws IOException {
 		String directory = "./src/teste.txt";
 		File file = new File(directory);

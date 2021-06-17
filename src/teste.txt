@@ -1,34 +1,60 @@
-float func1(float x, int y){
-    //codigo
-    return 2.0;
+// Ajeitar o += para atribuicao de funcao ex: i += 1; fica i = 1;
+int inteiro;
+float flutuante;
+char charDaTarde;
+
+int zero = 0;
+float um = 1.0;
+char dois = '2';
+
+int func(){
+	//um código lindo e extremamente útil!
+	int num = 10;
+	while(num > 1){
+		num = num -1;
+	}
+	return 1;
 }
 
-int main(int vei){
-    float f1 = 2.0;
-    float f2 = 2.0*(f1 + 2.0);
+int main(){
+	//inline
+	int somatorio = 0, n;
+	char a = 'a', b = 'b', d;
+	float f_1 = 11.0, f_2 = 2., f_3 = 3.f;
 
-    char c1 = '1';
-    char c2 = c1;
-    c1 = '7';
-
-    int a = 0;
-    int b = 3;
-    if(a < 0){
-        b = a;
-    }
-    else{
-        a = b;
+    if (n > 5){
+        somatorio = somatorio + n;
     }
 
-    for(int i = 0; i < 10; i += 1){
-        func1(f1, b);
-        func2(c2, a);
-    }
+	for (int i = 0; i < 10; i += 1){
 
-    return 1;
+	}
+	
+	n = 0;
+	do {
+		n += n;
+	}while(n < 10);
+	
+	/*
+	*
+	* :D
+	* :]
+	*
+	* :V um comentário de bloco!!
+	*
+	* :]
+	* :p
+	*
+	*/
+
+    return 0;
 }
 
-int func2(char x, int y){
-    //codigo
-    return 6;
+float areaDaCirc(int raio){
+	float A = 3.14*(2.0*raio);
+	return 2.2;
+}
+
+char facaEnquanto(){
+	return 'r';
 }

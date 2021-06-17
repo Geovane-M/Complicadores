@@ -72,21 +72,13 @@ public class First {
         }
     };
 
-    public final Hashtable<String, Tag> valor_dado = new Hashtable<>()
-    {
-        {
-            put("INTEGER",Tag.INTEGER);
-            put("CHARACTER", Tag.CHARACTER);
-            put("FLOATING_POINT", Tag.FLOATING_POINT);
-        }
-    };
-
     public final Hashtable<String, Tag> fim_declaracao = new Hashtable<>()
     {
         {
             put("SP_CHAR_OPEN_PARENTHESES", Tag.SP_CHAR_OPEN_PARENTHESES);
             put("ARI_OP_ATTRIBUTION", Tag.ARI_OP_ATTRIBUTION);
             put("SP_CHAR_SEMICOLON", Tag.SP_CHAR_SEMICOLON);
+            put("SP_CHAR_COMMA", Tag.SP_CHAR_COMMA);
         }
     };
 
@@ -98,14 +90,14 @@ public class First {
         }
     };
 
-    public final Hashtable<String, Tag> operando = new Hashtable<>(){
-        {
-            put("ID", Tag.ID);
-            put("INTEGER",Tag.INTEGER);
-            put("CHARACTER", Tag.CHARACTER);
-            put("FLOATING_POINT", Tag.FLOATING_POINT);
-        }
-    };
+//    public final Hashtable<String, Tag> operando = new Hashtable<>(){
+//        {
+//            put("ID", Tag.ID);
+//            put("INTEGER",Tag.INTEGER);
+//            put("CHARACTER", Tag.CHARACTER);
+//            put("FLOATING_POINT", Tag.FLOATING_POINT);
+//        }
+//    };
 
     public final Hashtable<String, Tag> operacao = new Hashtable<>()
     {
@@ -161,6 +153,53 @@ public class First {
         }
     };
 
+    public final Hashtable<String, Tag> expressao_aritmetica = new Hashtable<>() {
+        {
+            put("SP_CHAR_OPEN_PARENTHESES", Tag.SP_CHAR_OPEN_PARENTHESES);
+            put("ID", Tag.ID);
+            put("INTEGER", Tag.INTEGER);
+            put("CHARACTER", Tag.CHARACTER);
+            put("FLOATING_POINT", Tag.FLOATING_POINT);
+        }
+    };
+
+    public final Hashtable<String, Tag> expressao_aritmetica_linha = new Hashtable<>() {
+        {
+            put("ARI_OP_SUBTRACTION", Tag.ARI_OP_SUBTRACTION);
+            put("ARI_OP_ADDITION", Tag.ARI_OP_ADDITION);
+        }
+    };
+
+    public final Hashtable<String, Tag> termo = new Hashtable<>()
+    {
+        {
+            put("SP_CHAR_OPEN_PARENTHESES", Tag.SP_CHAR_OPEN_PARENTHESES);
+            put("ID", Tag.ID);
+            put("INTEGER", Tag.INTEGER);
+            put("CHARACTER", Tag.CHARACTER);
+            put("FLOATING_POINT", Tag.FLOATING_POINT);
+        }
+    };
+
+    public final Hashtable<String, Tag> termo_linha = new Hashtable<>()
+    {
+        {
+            put("ARI_OP_MULTIPLICATION", Tag.ARI_OP_MULTIPLICATION);
+            put("ARI_OP_DIVISION", Tag.ARI_OP_DIVISION);
+        }
+    };
+
+    public final Hashtable<String, Tag> fator = new Hashtable<>()
+    {
+        {
+            put("SP_CHAR_OPEN_PARENTHESES", Tag.SP_CHAR_OPEN_PARENTHESES);
+            put("ID", Tag.ID);
+            put("INTEGER", Tag.INTEGER);
+            put("CHARACTER", Tag.CHARACTER);
+            put("FLOATING_POINT", Tag.FLOATING_POINT);
+        }
+    };
+
     public final Hashtable<String, Tag> operacao_for = new Hashtable<>()
     {
         {
@@ -179,6 +218,9 @@ public class First {
     {
         {
             put("ID", Tag.ID);
+            put("INTEGER",Tag.INTEGER);
+            put("CHARACTER", Tag.CHARACTER);
+            put("FLOATING_POINT", Tag.FLOATING_POINT);
         }
     };
     
@@ -205,10 +247,19 @@ public class First {
             put("SP_CHAR_SEMICOLON", Tag.SP_CHAR_SEMICOLON);
         }
     };
+
     public final Hashtable<String, Tag> declaracao_for_inline = new Hashtable<>()
     {
         {
             put("SP_CHAR_COMMA", Tag.SP_CHAR_COMMA);
+            put("SP_CHAR_SEMICOLON", Tag.SP_CHAR_SEMICOLON);
+        }
+    };
+
+    public final Hashtable<String, Tag> condicao = new Hashtable<>()
+    {
+        {
+            put("ARI_OP_ATTRIBUTION", Tag.ARI_OP_ATTRIBUTION);
             put("SP_CHAR_SEMICOLON", Tag.SP_CHAR_SEMICOLON);
         }
     };

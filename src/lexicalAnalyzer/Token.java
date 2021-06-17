@@ -1,33 +1,52 @@
 package lexicalAnalyzer;
 
 public class Token {
-
+	private String name = "";
 	private long line;
 	private String scope;
 	private long column;
-	private final Tag Mark;
-	private final String value;
+	private Tag mark;
+	private String value="";
 
 	Token(Tag mark, long line, long column, String actual_value) {
-		this.Mark = mark;
+		this.mark = mark;
 		this.line = line;
 		this.column = column;
 		this.value = actual_value;
 	}
 
 	public Token(Tag mark, String value) {
-		this.Mark = mark;
+		this.mark = mark;
 		this.value = value;
 	}
 
 	public Token(Tag mark, String value, String scope) {
-		this.Mark = mark;
+		this.mark = mark;
 		this.value = value;
 		this.scope = scope;
 	}
 
+	public Token() {
+
+	}
+	public Token(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setMark(Tag mark) {
+		this.mark = mark;
+	}
+
 	public Tag getMark() {
-		return Mark;
+		return mark;
 	}
 
 	public long getLine() {
@@ -36,6 +55,10 @@ public class Token {
 
 	public long getColumn() {
 		return column;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public String getValue() {
@@ -59,14 +82,14 @@ public class Token {
 	}
 
 	public boolean equals(Token obj) {
-		return obj.Mark.equals(this.Mark) 
+		return obj.mark.equals(this.mark)
 				&& obj.value.equals(this.value) 
-				&& obj.scope == this.scope;
+				&& obj.scope.equals(this.scope);
 	}
 
 	@Override
 	public String toString() {
-		return "\nToken name: " + this.Mark + " --- Actual value: " + this.value + " --- Position (line:column) "
+		return "\nToken name: " + this.mark + " --- Actual value: " + this.value + " --- Position (line:column) "
 				+ this.line + ":" + this.column;
 	}
 }

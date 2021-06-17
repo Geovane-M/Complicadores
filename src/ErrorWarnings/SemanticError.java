@@ -8,11 +8,15 @@ public class SemanticError extends Exception{
         super("Semantic Error!");
     }
 	
-	public SemanticError(String message) {
-        super(message);
-    }
+//	public SemanticError(String message) {
+//        super(message);
+//    }
 
     public SemanticError(String expected, String found, long line, String column) {
         System.err.println("Semantic Error: Expected '" + expected.toLowerCase() +"' found '"+ found.toLowerCase()  +"' at line " +line+ "\n"+ column);
+    }
+
+    public SemanticError(String message, long line, String column) {
+        System.err.println(message +" at line " +line+ "\n"+ column);
     }
 }
