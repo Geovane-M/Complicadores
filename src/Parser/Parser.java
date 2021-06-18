@@ -516,20 +516,20 @@ public class Parser {
     private void declaracao_for()
             throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
         if (!this.token.getMark().equals(Tag.ID) && !this.first.tipo_dado.contains(token.getMark()))
-            throw new SyntaxError("Data type or identifier", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("declaration or identifier", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
         if (this.token.getMark().equals(Tag.ID)) {
             this.attribuitionCurrentToken = this.token;
             SemanticToken identifier = this.getIdentifier(this.token.getValue());
             if (identifier == null)
-                throw new SemanticError("Identifier '" + this.token.getValue() + "' is not defined",
+                throw new SemanticError("identifier '" + this.token.getValue() + "' is not defined",
                         this.token.getLine(), this.lexicalAnalyzer.lineError());
             this.currentType = identifier.getType();
         } else {
             this.currentType = SemanticType.valueOf(this.token.getMark().name());
             this.nextToken();
             if (!this.tokenEquals(Tag.ID))
-                throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+                throw new SyntaxError("identifier", this.token.getValue(), this.token.getLine(),
                         this.lexicalAnalyzer.lineError());
             this.attribuitionCurrentToken = this.token;
             this.registraIdentificadorAtual();
@@ -559,7 +559,7 @@ public class Parser {
         if (this.tokenEquals(Tag.SP_CHAR_COMMA)) {
             nextToken();
             if (!this.tokenEquals(Tag.ID))
-                throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+                throw new SyntaxError("identifier", this.token.getValue(), this.token.getLine(),
                         this.lexicalAnalyzer.lineError());
 
             fim_declaracao_for();
@@ -672,7 +672,7 @@ public class Parser {
         this.returnToPreviousScope();
     }
 
-    private void condicao(boolean invertRelOperator)
+    private void condicao(boolean invertReloperand)
             throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
         this.nextToken();
         if (this.token.getMark().name().equals("ID")) {
@@ -701,15 +701,15 @@ public class Parser {
         this.expressaoAritmetica(false);
 
         if (!this.first.operador_relacional.contains(this.token.getMark()))
-            throw new SyntaxError("Relational operator", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("relational operand", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
-        if (invertRelOperator)
-            this.token = this.invertRelOperator(this.token);
+        if (invertReloperand)
+            this.token = this.invertReloperand(this.token);
         this.nextToken();
         this.expressaoAritmetica(false);
     }
 
-    private Token invertRelOperator(Token token) {
+    private Token invertReloperand(Token token) {
 
         switch (token.getMark().getDescription()) {
             case "REL_OP_EQUALS":
@@ -740,7 +740,7 @@ public class Parser {
 
         this.nextToken();
         if (!this.tokenEquals(Tag.ID))
-            throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("identifier", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         this.attribuitionCurrentToken = this.token;
@@ -781,7 +781,7 @@ public class Parser {
             throws LexicalError, ManyCharacters, EmptyCharacter, SyntaxError, OutOfRange, SemanticError {
         this.nextToken();
         if (!this.first.operacao.contains(this.token.getMark()))
-            throw new SyntaxError("Invalid attribuition declaration");
+            throw new SyntaxError("Invalid attribuition declaration", this.token.getLine(), this.lexicalAnalyzer.lineError());
         if (this.tokenEquals(Tag.CHARACTER)) {
             this.verificaTipo();
             this.registraIdentificadorAtual();
@@ -799,14 +799,14 @@ public class Parser {
     private void declaracao_inline()
             throws LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SyntaxError, SemanticError {
         if (!this.first.declaracao_inline.contains(this.token.getMark()))
-            throw new SyntaxError("Declaration", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("declaration", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         if (this.tokenEquals(Tag.SP_CHAR_SEMICOLON))
             return;
         this.nextToken();
         if (!this.tokenEquals(Tag.ID))
-            throw new SyntaxError("Identifier", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("identifier", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         this.attribuitionCurrentToken = this.token;
@@ -844,7 +844,7 @@ public class Parser {
         if (atribuicao)
             this.expressaoDaAtribuicaoAtual.add(this.token);
         if (!this.first.expressao_aritmetica.contains(this.token.getMark()))
-            throw new SyntaxError("Boolean Expression", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("operand", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
         this.termo(atribuicao);
         this.expressaoAritmeticaLinha(atribuicao);
@@ -865,7 +865,7 @@ public class Parser {
     private void termo(boolean atribuicao)
             throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SemanticError {
         if (!this.first.termo.contains(this.token.getMark()))
-            throw new SyntaxError("operator", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("operand", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         this.fator(atribuicao);
@@ -888,7 +888,7 @@ public class Parser {
     private void fator(boolean atribuicao)
             throws SyntaxError, LexicalError, ManyCharacters, EmptyCharacter, OutOfRange, SemanticError {
         if (!this.first.fator.contains(this.token.getMark()))
-            throw new SyntaxError("operator", this.token.getValue(), this.token.getLine(),
+            throw new SyntaxError("operand", this.token.getValue(), this.token.getLine(),
                     this.lexicalAnalyzer.lineError());
 
         if (this.tokenEquals(Tag.SP_CHAR_OPEN_PARENTHESES)) {
@@ -973,7 +973,7 @@ public class Parser {
     }
 
     private void gerarTokensExpressoesAritmeticas(int totalScopes, LinkedList<ExpressionToken> expressionTokens,
-                                                  LinkedList<Integer> idsTaken, Tag operator) {
+                                                  LinkedList<Integer> idsTaken, Tag operand) {
         int forCurrentScope = 0;
         ExpressionToken newExpression;
         int i = 0;
@@ -984,19 +984,19 @@ public class Parser {
                 forCurrentScope += 1;
             else if (t.getMark().equals(Tag.SP_CHAR_CLOSE_PARENTHESES))
                 forCurrentScope -= 1;
-            else if (t.getMark().equals(operator) && forCurrentScope == totalScopes) {
+            else if (t.getMark().equals(operand) && forCurrentScope == totalScopes) {
                 newExpression = new ExpressionToken();
                 if (!idsTaken.contains(i - 1)) {
                     Token leftToken = this.expressaoDaAtribuicaoAtual.get(i - 1);
-                    newExpression.setLeftOperator(leftToken);
+                    newExpression.setLeftOperand(leftToken);
                     idsTaken.add(i - 1);
                 }
                 if (!idsTaken.contains(i + 1)) {
                     Token rightToken = this.expressaoDaAtribuicaoAtual.get(i + 1);
-                    newExpression.setRightOperator(rightToken);
+                    newExpression.setRightOperand(rightToken);
                     idsTaken.add(i + 1);
                 }
-                newExpression.setAriOperator(this.expressaoDaAtribuicaoAtual.get(i));
+                newExpression.setAriOperand(this.expressaoDaAtribuicaoAtual.get(i));
                 idsTaken.add(i);
                 newExpression.setExpressionScope(forCurrentScope);
                 expressionTokens.add(newExpression);
@@ -1038,42 +1038,42 @@ public class Parser {
         // Cria os tokens temporários
         ExpressionToken newToken;
         for (ExpressionToken t : expressionTokens) {
-            newToken = new ExpressionToken("temp_" + tag + i, t.getLeftOperator(), t.getAriOperator(),
-                    t.getRightOperator(), t.getExpressionScope());
-            if ((t.getLeftOperator() == null || t.getLeftOperator().getMark().equals(Tag.SP_CHAR_CLOSE_PARENTHESES))
-                    && (t.getRightOperator() == null
-                    || t.getRightOperator().getMark().equals(Tag.SP_CHAR_OPEN_PARENTHESES))) {
-                if (t.getAriOperator().getMark().equals(Tag.ARI_OP_ADDITION)
-                        || t.getAriOperator().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
+            newToken = new ExpressionToken("temp_" + tag + i, t.getLeftOperand(), t.getAriOperand(),
+                    t.getRightOperand(), t.getExpressionScope());
+            if ((t.getLeftOperand() == null || t.getLeftOperand().getMark().equals(Tag.SP_CHAR_CLOSE_PARENTHESES))
+                    && (t.getRightOperand() == null
+                    || t.getRightOperand().getMark().equals(Tag.SP_CHAR_OPEN_PARENTHESES))) {
+                if (t.getAriOperand().getMark().equals(Tag.ARI_OP_ADDITION)
+                        || t.getAriOperand().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
                     temporaryTokens.add(newToken);
                 } else {
                     try {
-                        newToken.setLeftOperator(temporaryTokens.get(i - 3));
-                        newToken.setRightOperator(temporaryTokens.get(i - 2));
+                        newToken.setLeftOperand(temporaryTokens.get(i - 3));
+                        newToken.setRightOperand(temporaryTokens.get(i - 2));
                     } catch (Exception ex) {
 
                     }
                     temporaryTokens.add(newToken);
                 }
-            } else if (t.getLeftOperator() == null) {
-                if (t.getAriOperator().getMark().equals(Tag.ARI_OP_ADDITION)
-                        || t.getAriOperator().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
+            } else if (t.getLeftOperand() == null) {
+                if (t.getAriOperand().getMark().equals(Tag.ARI_OP_ADDITION)
+                        || t.getAriOperand().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
                     temporaryTokens.add(newToken);
                 } else {
                     try {
-                        newToken.setLeftOperator(temporaryTokens.get(i - 2));
+                        newToken.setLeftOperand(temporaryTokens.get(i - 2));
                     } catch (Exception ex) {
 
                     }
                     temporaryTokens.add(newToken);
                 }
-            } else if (t.getRightOperator() == null) {
-                if (t.getAriOperator().getMark().equals(Tag.ARI_OP_ADDITION)
-                        || t.getAriOperator().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
+            } else if (t.getRightOperand() == null) {
+                if (t.getAriOperand().getMark().equals(Tag.ARI_OP_ADDITION)
+                        || t.getAriOperand().getMark().equals(Tag.ARI_OP_SUBTRACTION)) {
                     temporaryTokens.add(newToken);
                 } else {
                     try {
-                        newToken.setRightOperator(temporaryTokens.get(i - 2));
+                        newToken.setRightOperand(temporaryTokens.get(i - 2));
                     } catch (Exception ex) {
 
                     }
@@ -1091,9 +1091,9 @@ public class Parser {
 
         else if (temporaryTokens.size() == 1) {
             ExpressionToken aux = temporaryTokens.getLast();
-            String varValue = aux.getLeftOperator().getValue();
-            varValue += aux.getAriOperator().getValue();
-            varValue += aux.getRightOperator().getValue();
+            String varValue = aux.getLeftOperand().getValue();
+            varValue += aux.getAriOperand().getValue();
+            varValue += aux.getRightOperand().getValue();
             this.geraDefinicaoDeVariavel(declaracao, this.attribuitionCurrentToken.getValue(), varValue);
         } else
             this.imprimirTokensTemporariosDeExpressoesAritmeticas(declaracao, temporaryTokens);
@@ -1105,37 +1105,37 @@ public class Parser {
         int i = 0;
         int aux = 0;
         for (ExpressionToken t : temporaryTokens) {
-            if (t.getRightOperator() == null) {
+            if (t.getRightOperand() == null) {
                 try {
-                    t.setRightOperator(temporaryTokens.get(aux - 1));
+                    t.setRightOperand(temporaryTokens.get(aux - 1));
                     idsTaken.add(aux - 2);
                 } catch (Exception ex) {
                 }
             }
-            if (t.getLeftOperator() == null)
+            if (t.getLeftOperand() == null)
                 try {
-                    t.setLeftOperator(temporaryTokens.get(aux - 2));
+                    t.setLeftOperand(temporaryTokens.get(aux - 2));
                     idsTaken.add(aux - 1);
                 } catch (Exception ex) {
-                    t.setLeftOperator(temporaryTokens.get(aux - 1));
+                    t.setLeftOperand(temporaryTokens.get(aux - 1));
                 }
 
-            if (t.getLeftOperator() != null && (t.getLeftOperator().getMark() != null
-                    && t.getLeftOperator().getMark().equals(Tag.SP_CHAR_CLOSE_PARENTHESES))) {
+            if (t.getLeftOperand() != null && (t.getLeftOperand().getMark() != null
+                    && t.getLeftOperand().getMark().equals(Tag.SP_CHAR_CLOSE_PARENTHESES))) {
                 try {
                     if (idsTaken.contains(i - 1))
-                        t.setLeftOperator(temporaryTokens.get(aux - 2));
+                        t.setLeftOperand(temporaryTokens.get(aux - 2));
                     else
-                        t.setLeftOperator(temporaryTokens.get(aux - 1));
+                        t.setLeftOperand(temporaryTokens.get(aux - 1));
                     idsTaken.add(aux - 1);
                 } catch (Exception ex) {
                 }
             }
-            if (t.getRightOperator() != null && (t.getRightOperator().getMark() != null
-                    && t.getRightOperator().getMark().equals(Tag.SP_CHAR_OPEN_PARENTHESES))) {
+            if (t.getRightOperand() != null && (t.getRightOperand().getMark() != null
+                    && t.getRightOperand().getMark().equals(Tag.SP_CHAR_OPEN_PARENTHESES))) {
                 for (i = aux; i >= 0; i -= 1) {
                     if (temporaryTokens.get(i).getExpressionScope() > t.getExpressionScope()) {
-                        t.setRightOperator(temporaryTokens.get(i));
+                        t.setRightOperand(temporaryTokens.get(i));
                         idsTaken.add(i);
                         break;
                     }

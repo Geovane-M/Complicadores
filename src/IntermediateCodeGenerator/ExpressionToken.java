@@ -3,45 +3,45 @@ package IntermediateCodeGenerator;
 import lexicalAnalyzer.Token;
 
 public class ExpressionToken extends Token{
-    private Token leftOperator;
+    private Token leftOperand;
     private Token ariOperator;
-    private Token rightOperator;
+    private Token rightOperand;
     private int expressionScope;
 
     public ExpressionToken(){
         super();
     }
 
-    public ExpressionToken(String _name, Token leftOperator, Token ariOperator, Token rightOperator, int expressionScope) {
+    public ExpressionToken(String _name, Token leftOperand, Token ariOperator, Token rightOperand, int expressionScope) {
         super(_name);
-        this.leftOperator = leftOperator;
+        this.leftOperand = leftOperand;
         this.ariOperator = ariOperator;
-        this.rightOperator = rightOperator;
+        this.rightOperand = rightOperand;
         this.expressionScope = expressionScope;
     }
 
-    public void setLeftOperator(Token leftOperator){
-        this.leftOperator = leftOperator;
+    public void setLeftOperand(Token leftoperand){
+        this.leftOperand = leftoperand;
     }
 
-    public Token getLeftOperator() {
-        return leftOperator;
+    public Token getLeftOperand() {
+        return leftOperand;
     }
 
-    public void setAriOperator(Token ariOperator) {
-        this.ariOperator = ariOperator;
+    public void setAriOperand(Token arioperand) {
+        this.ariOperator = arioperand;
     }
 
-    public Token getAriOperator() {
+    public Token getAriOperand() {
         return ariOperator;
     }
 
-    public void setRightOperator(Token rightOperator) {
-        this.rightOperator = rightOperator;
+    public void setRightOperand(Token rightoperand) {
+        this.rightOperand = rightoperand;
     }
 
-    public Token getRightOperator() {
-        return rightOperator;
+    public Token getRightOperand() {
+        return rightOperand;
     }
 
     public void setExpressionScope(int expressionScope) {
@@ -55,9 +55,9 @@ public class ExpressionToken extends Token{
     @Override
     public String toString() {
         String _return = this.getName()+" = ";
-        if (leftOperator != null) _return += leftOperator.getValue()+leftOperator.getName()+" ";
+        if (leftOperand != null) _return += leftOperand.getValue()+ leftOperand.getName()+" ";
         if (ariOperator != null) _return += ariOperator.getValue()+" ";
-        if (rightOperator != null) _return += rightOperator.getValue()+rightOperator.getName()+" ";
+        if (rightOperand != null) _return += rightOperand.getValue()+ rightOperand.getName()+" ";
         return _return;
     }
 }
