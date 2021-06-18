@@ -39,6 +39,8 @@ int main(){
 	
     if (n > 5){
         somatorio = somatorio + n;
+    }else{
+    	somatorio = somatorio + n+2;
     }
 
 	for (int i = 0; i < 10; i += 1){
