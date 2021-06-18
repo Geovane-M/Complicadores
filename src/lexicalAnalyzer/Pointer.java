@@ -35,7 +35,7 @@ public class Pointer {
 		byte[] _data = new byte[(int) file.length()];
 		fis.read(_data);
 		fis.close();
-		this.data = new String(_data, "UTF-8");//.trim();
+		this.data = new String(_data, "UTF-8");
 		this.scanner = new Scanner(this.data);
 		this.scanner.useDelimiter("[\r\n]+");
 		this.EOF = this.data.length();

@@ -74,14 +74,14 @@ public class First {
         }
     };
 
-//    public final Hashtable<String, Tag> operando = new Hashtable<>(){
-//        {
-//            put("ID", Tag.ID);
-//            put("INTEGER",Tag.INTEGER);
-//            put("CHARACTER", Tag.CHARACTER);
-//            put("FLOATING_POINT", Tag.FLOATING_POINT);
-//        }
-//    };
+    public final Hashtable<String, Tag> operando = new Hashtable<>(){
+        {
+            put("ID", Tag.ID);
+            put("INTEGER",Tag.INTEGER);
+            put("CHARACTER", Tag.CHARACTER);
+            put("FLOATING_POINT", Tag.FLOATING_POINT);
+        }
+    };
 
     public final Hashtable<String, Tag> operacao = new Hashtable<>()
     {

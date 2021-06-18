@@ -1,14 +1,13 @@
 package IDE;
 
-import java.io.IOException;
-
 import ErrorWarnings.EmptyCharacter;
-import ErrorWarnings.LexicalError;
 import ErrorWarnings.ManyCharacters;
-import ErrorWarnings.NoTarget;
-import ErrorWarnings.OutOfRange;
 import ErrorWarnings.SemanticError;
+import ErrorWarnings.LexicalError;
 import ErrorWarnings.SyntaxError;
+import ErrorWarnings.OutOfRange;
+import ErrorWarnings.NoTarget;
+import java.io.IOException;
 import Parser.Parser;
 
 public class IDE {

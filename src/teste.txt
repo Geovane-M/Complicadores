@@ -7,6 +7,8 @@ int zero = 0;
 float um = 1.0;
 char dois = '2';
 
+/*Erros Léxicos:*/
+
 //char d = '';
 //in#t n = 0;
 
@@ -23,13 +25,18 @@ int func(){
 int main(){
 	//inline
 	int somatorio = 0, n;
-	//int f_1 = 0;
 	char a = 'a', b = 'b', d;
 	float f_1 = 11.0, f_2 = 2., f_3 = 3.f;
     f_1 += 2.0+(9.0*9.0);
+    int numero = 3*3/2*(1+(2/(4*2)))+(0);
     
+    /*Erros Sitáticos e Semântico*/
+    
+    //ch = 'c';
 	//float f_1 = 1.0;
-	if(1 == 1){}}
+	//if(1 == 1){}}
+	//int numero = 3 3;
+	
     if (n > 5){
         somatorio = somatorio + n;
     }
@@ -65,5 +72,6 @@ float areaDaCirc(int raio){
 }
 
 char facaEnquanto(){
+	///*
 	return 'r';
 }
