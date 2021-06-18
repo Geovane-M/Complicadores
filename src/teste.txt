@@ -1,4 +1,4 @@
-// Ajeitar o += para atribuicao de funcao ex: i += 1; fica i = 1;
+
 int inteiro;
 float flutuante;
 char charDaTarde;
@@ -6,6 +6,10 @@ char charDaTarde;
 int zero = 0;
 float um = 1.0;
 char dois = '2';
+
+//char d = '';
+//in#t n = 0;
+
 
 int func(){
 	//um código lindo e extremamente útil!
@@ -19,11 +23,13 @@ int func(){
 int main(){
 	//inline
 	int somatorio = 0, n;
+	//int f_1 = 0;
 	char a = 'a', b = 'b', d;
 	float f_1 = 11.0, f_2 = 2., f_3 = 3.f;
-
     f_1 += 2.0+(9.0*9.0);
-
+    
+	//float f_1 = 1.0;
+	if(1 == 1){}}
     if (n > 5){
         somatorio = somatorio + n;
     }
@@ -55,8 +61,7 @@ int main(){
 }
 
 float areaDaCirc(int raio){
-	float A = 3.14*(2.0*raio);
-	return A+2.1*5.1/4.8;
+	return 3.14*(2.0*raio);
 }
 
 char facaEnquanto(){

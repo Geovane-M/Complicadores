@@ -21,7 +21,6 @@ public class LexicalAnalyzer {
 
 	public LexicalAnalyzer() throws IOException, NoTarget {
 		this.pointer = Pointer.getInstance();
-//		this.pointer = new Pointer();
 		if (this.pointer.isEOF()) {
 			throw new NoTarget();
 		} else {
@@ -37,13 +36,11 @@ public class LexicalAnalyzer {
 			this.currentMark = Tag.EOF;
 			this.currentValue = Tag.EOF.getDescription();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
-			//System.out.println("Token fim de arquivo "+this.currentToken);
 		} else {
 			this.getNextToken();
 			this.currentToken = new Token(this.currentMark, this.currentValue);
 			this.currentToken.setColumn(this.currentIndexMark);
 			this.currentToken.setLine(this.line);
-			//System.out.println("Normal token"+this.currentToken);
 		}
 		
 		return this.currentToken;
@@ -409,7 +406,10 @@ public class LexicalAnalyzer {
 	}
 
 	public void restartPointer() throws IOException{
+		this.line = 1;
+		this.column = 0;
 		this.flag = false;
-		this.pointer = Pointer.restartInstance();
+		this.updateMarkLocation();
+		this.pointer = this.pointer.restartInstance();
 	}
 }

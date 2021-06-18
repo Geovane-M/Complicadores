@@ -12,7 +12,7 @@ public class SyntaxError extends Exception{
     }
 
     public SyntaxError(String expected, String found, long line, String column) {
-        System.err.println("SyntaxError: Expected '" + expected.toLowerCase() +"' found '"+ found +"' at line " +line+ "\n"+ column);
+        System.err.println("\nSyntaxError: Expected '" + expected.toLowerCase() +"' found '"+ found +"' at line " +line+ "\n"+ column);
     }
 
     public SyntaxError(String message, long line, String column) {

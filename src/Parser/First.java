@@ -99,7 +99,6 @@ public class First {
             put("SP_CHAR_OPEN_PARENTHESES", Tag.SP_CHAR_OPEN_PARENTHESES);
             put("ID", Tag.ID);
             put("INTEGER", Tag.INTEGER);
-            put("CHARACTER", Tag.CHARACTER);
             put("FLOATING_POINT", Tag.FLOATING_POINT);
         }
     };

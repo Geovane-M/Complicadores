@@ -23,5 +23,4 @@ public class IDE {
 			e.printStackTrace();
 		}
 	}
-	
 }

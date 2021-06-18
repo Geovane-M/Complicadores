@@ -6,7 +6,7 @@ public class Token {
 	private String scope;
 	private long column;
 	private Tag mark;
-	private String value="";
+	private String value = "";
 
 	Token(Tag mark, long line, long column, String actual_value) {
 		this.mark = mark;
@@ -29,6 +29,7 @@ public class Token {
 	public Token() {
 
 	}
+
 	public Token(String name) {
 		this.name = name;
 	}
@@ -82,9 +83,7 @@ public class Token {
 	}
 
 	public boolean equals(Token obj) {
-		return obj.mark.equals(this.mark)
-				&& obj.value.equals(this.value) 
-				&& obj.scope.equals(this.scope);
+		return obj.mark.equals(this.mark) && obj.value.equals(this.value) && obj.scope.equals(this.scope);
 	}
 
 	@Override
